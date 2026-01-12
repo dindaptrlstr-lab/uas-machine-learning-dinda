@@ -32,4 +32,3 @@ with tab4:
 
 with tab5:
     st.write("📧 Email  : dindaptrlstr@email.com")
-    st.write("📍 Kampus : Universitas Muhammadiyah Semarang")
