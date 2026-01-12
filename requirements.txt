@@ -1,0 +1,9 @@
+streamlit
+pandas
+numpy
+scikit-learn==1.4.2
+imbalanced-learn==0.12.3
+joblib
+altair
+plotly
+catboost
