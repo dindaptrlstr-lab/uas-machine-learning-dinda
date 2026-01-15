@@ -6,9 +6,13 @@ def about_dataset():
     col1, col2 = st.columns([5,5])
 
     with col1:
-        link = "https://myhealthcentre.ca/wp-content/uploads/2025/03/17096-819x583.jpg" 
-        st.image(link, caption="Health & Environmental Dataset")
-
+    img_url = "https://upload.wikimedia.org/wikipedia/commons/8/82/Air_pollution.jpg"
+    st.image(
+        img_url,
+        caption="Health & Environmental Dataset",
+        use_container_width=True
+    )
+     
     with col2:
         st.write(
             "Dataset yang digunakan dalam penelitian ini terdiri dari dua sumber utama, "
