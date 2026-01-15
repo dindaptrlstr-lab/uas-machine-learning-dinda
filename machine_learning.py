@@ -28,7 +28,6 @@ def ml_model():
     # ===============================
     df = pd.read_csv("cardio_train.csv")
     df = df.drop(columns=["id"])
-
     target = "cardio"
 
     # ===============================
@@ -76,14 +75,26 @@ def ml_model():
     X_train_bal, y_train_bal = smote.fit_resample(X_train, y_train)
 
     # ===============================
-    # 7. Model List
+    # 7. Model List (CATBOOST CPU MODE)
     # ===============================
     models = {
         "Logistic Regression": LogisticRegression(max_iter=1000),
         "Decision Tree": DecisionTreeClassifier(random_state=42),
-        "Random Forest": RandomForestClassifier(n_estimators=100, random_state=42),
+        "Random Forest": RandomForestClassifier(
+            n_estimators=100, random_state=42
+        ),
         "SVM": SVC(probability=True, random_state=42),
-        "CatBoost": CatBoostClassifier(verbose=0, random_state=42)
+
+        # ✅ CATBOOST CPU-ONLY (WAJIB UNTUK STREAMLIT CLOUD)
+        "CatBoost": CatBoostClassifier(
+            iterations=200,
+            depth=6,
+            learning_rate=0.1,
+            loss_function="Logloss",
+            verbose=False,
+            task_type="CPU",
+            random_state=42
+        )
     }
 
     # ===============================
@@ -116,7 +127,10 @@ def ml_model():
     # ===============================
     # 9. Model Terbaik
     # ===============================
-    best_model_row = result_df.sort_values("ROC AUC (%)", ascending=False).iloc[0]
+    best_model_row = result_df.sort_values(
+        "ROC AUC (%)", ascending=False
+    ).iloc[0]
+
     best_model_name = best_model_row["Model"]
     best_model = trained_models[best_model_name]
 
@@ -126,7 +140,7 @@ def ml_model():
     )
 
     # ===============================
-    # 10. Confusion Matrix Model Terbaik
+    # 10. Confusion Matrix
     # ===============================
     st.subheader("Confusion Matrix – Model Terbaik")
 
