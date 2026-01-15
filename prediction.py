@@ -6,7 +6,7 @@ import joblib
 
 
 def prediction_app():
-    st.header("🔮 Prediksi Risiko Penyakit Kardiovaskular")
+    st.header("Prediksi Risiko Penyakit Kardiovaskular")
     st.write(
         "Masukkan data pasien untuk memprediksi risiko "
         "**penyakit kardiovaskular** menggunakan "
@@ -29,7 +29,7 @@ def prediction_app():
     # ===============================
     # 2. Input Data Pasien
     # ===============================
-    st.subheader("🧾 Input Data Pasien")
+    st.subheader("Input Data Pasien")
 
     col1, col2, col3, col4 = st.columns(4)
     with col1:
@@ -63,7 +63,7 @@ def prediction_app():
     # 3. Feature Engineering
     # ===============================
     bmi = weight / ((height / 100) ** 2)
-    st.info(f"📊 BMI Pasien: **{bmi:.2f}**")
+    st.info(f"BMI Pasien: **{bmi:.2f}**")
 
     user_df = pd.DataFrame({
         "age": [age],
@@ -102,11 +102,11 @@ def prediction_app():
     # ===============================
     # 6. Prediction
     # ===============================
-    if st.button("🔍 Prediksi Risiko"):
+    if st.button("Prediksi Risiko"):
         prob = model.predict_proba(user_processed)[0][1]
         pred = model.predict(user_processed)[0]
 
-        st.subheader("📌 Hasil Prediksi")
+        st.subheader("Hasil Prediksi")
         st.metric("Probabilitas Risiko", f"{prob * 100:.2f}%")
 
         if pred == 1:
@@ -116,7 +116,7 @@ def prediction_app():
 
         st.divider()
 
-        st.markdown("### 🧠 Interpretasi")
+        st.markdown("### Interpretasi")
         st.markdown("""
         - Probabilitas tinggi menunjukkan potensi risiko kardiovaskular
         - Model digunakan sebagai **alat skrining awal**
