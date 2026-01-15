@@ -32,10 +32,19 @@ def ml_model():
     st.header("Machine Learning – Cardiovascular Disease")
 
     # ===============================
-    # 1. Load Dataset
+    # 1. Load Dataset (SAFE)
     # ===============================
     df = pd.read_csv("cardio_train.csv")
-    df = df.drop(columns=["id"])
+
+    # SAFE DROP ID (ANTI KEYERROR)
+    if "id" in df.columns:
+        df = df.drop(columns=["id"])
+
+    # SAFE TARGET CHECK
+    if "cardio" not in df.columns:
+        st.error("❌ Kolom target 'cardio' tidak ditemukan di dataset")
+        st.stop()
+
     target = "cardio"
 
     # ===============================
@@ -73,7 +82,10 @@ def ml_model():
     y = df_model[target]
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
+        X, y,
+        test_size=0.2,
+        random_state=42,
+        stratify=y
     )
 
     # ===============================
@@ -89,9 +101,10 @@ def ml_model():
         "Logistic Regression": LogisticRegression(max_iter=1000),
         "Decision Tree": DecisionTreeClassifier(random_state=42),
         "Random Forest": RandomForestClassifier(
-            n_estimators=100, random_state=42
+            n_estimators=100,
+            random_state=42
         ),
-        "SVM": SVC(probability=True, random_state=42),
+        "SVM": SVC(probability=True, random_state=42)
     }
 
     if CATBOOST_AVAILABLE:
