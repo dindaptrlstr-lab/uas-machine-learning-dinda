@@ -6,8 +6,8 @@ def about_dataset():
     col1, col2 = st.columns([5,5])
 
     with col1:
-        link = "https://upload.wikimedia.org/wikipedia/commons/3/3a/Air_pollution_in_India.jpg"
-        st.image(link, caption="Cardiovascular Disease & Air Quality Analysis", use_container_width=True)
+        link = "https://myhealthcentre.ca/wp-content/uploads/2025/03/17096-819x583.jpg" 
+        st.image(link, caption="Health & Environmental Dataset")
 
         with col1:
 
