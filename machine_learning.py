@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-import altair as alt
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
@@ -11,8 +10,12 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 
 from sklearn.metrics import (
-    accuracy_score, precision_score, recall_score,
-    f1_score, roc_auc_score, confusion_matrix
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    roc_auc_score,
+    confusion_matrix
 )
 
 from imblearn.over_sampling import SMOTE
@@ -29,40 +32,51 @@ except ModuleNotFoundError:
 
 
 def ml_model():
-    st.header("Machine Learning – Cardiovascular Disease")
+    st.header("🤖 Machine Learning – Cardiovascular Disease")
 
     # ===============================
     # 1. Load Dataset (SAFE)
     # ===============================
-    df = pd.read_csv("cardio_train.csv")
-
-    # SAFE DROP ID (ANTI KEYERROR)
-    if "id" in df.columns:
-        df = df.drop(columns=["id"])
-
-    # SAFE TARGET CHECK
-    if "cardio" not in df.columns:
-        st.error("❌ Kolom target 'cardio' tidak ditemukan di dataset")
+    try:
+        df = pd.read_csv("cardio_train.csv", sep=";")
+    except Exception as e:
+        st.error("❌ Gagal memuat dataset cardio_train.csv")
         st.stop()
 
+    # Drop ID jika ada
+    if "id" in df.columns:
+        df.drop(columns=["id"], inplace=True)
+
+    # Cek target
     target = "cardio"
+    if target not in df.columns:
+        st.error("❌ Kolom target 'cardio' tidak ditemukan")
+        st.stop()
 
     # ===============================
     # 2. Outlier Handling (IQR)
     # ===============================
-    numeric_cols = df.drop(columns=[target]).select_dtypes(include="number").columns
+    numeric_cols = (
+        df.drop(columns=[target])
+        .select_dtypes(include="number")
+        .columns
+    )
 
     Q1 = df[numeric_cols].quantile(0.25)
     Q3 = df[numeric_cols].quantile(0.75)
     IQR = Q3 - Q1
 
     before = df.shape[0]
-    df = df[~((df[numeric_cols] < (Q1 - 1.5 * IQR)) |
-              (df[numeric_cols] > (Q3 + 1.5 * IQR))).any(axis=1)]
+    df = df[
+        ~(
+            (df[numeric_cols] < (Q1 - 1.5 * IQR)) |
+            (df[numeric_cols] > (Q3 + 1.5 * IQR))
+        ).any(axis=1)
+    ]
     after = df.shape[0]
 
-    st.write(f"Data sebelum outlier removal: **{before}**")
-    st.write(f"Data setelah outlier removal: **{after}**")
+    st.write(f"📌 Data sebelum outlier removal: **{before}**")
+    st.write(f"📌 Data setelah outlier removal: **{after}**")
 
     # ===============================
     # 3. Encoding
@@ -78,11 +92,12 @@ def ml_model():
     # ===============================
     # 5. Train Test Split
     # ===============================
-    X = df_model.drop(target, axis=1)
+    X = df_model.drop(columns=[target])
     y = df_model[target]
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y,
+        X,
+        y,
         test_size=0.2,
         random_state=42,
         stratify=y
@@ -95,7 +110,7 @@ def ml_model():
     X_train_bal, y_train_bal = smote.fit_resample(X_train, y_train)
 
     # ===============================
-    # 7. Model List (SAFE)
+    # 7. Model List
     # ===============================
     models = {
         "Logistic Regression": LogisticRegression(max_iter=1000),
@@ -114,16 +129,15 @@ def ml_model():
             learning_rate=0.1,
             loss_function="Logloss",
             verbose=False,
-            task_type="CPU",
             random_state=42
         )
     else:
-        st.warning("⚠️ CatBoost tidak tersedia di server. Model lain tetap dijalankan.")
+        st.warning("⚠️ CatBoost tidak tersedia. Model lain tetap dijalankan.")
 
     # ===============================
     # 8. Training & Evaluation
     # ===============================
-    st.subheader("Evaluasi Model")
+    st.subheader("📊 Evaluasi Model")
 
     results = []
     trained_models = {}
@@ -145,31 +159,30 @@ def ml_model():
         })
 
     result_df = pd.DataFrame(results)
-    st.dataframe(result_df)
+    st.dataframe(result_df, use_container_width=True)
 
     # ===============================
     # 9. Best Model
     # ===============================
     best_row = result_df.sort_values(
-        "ROC AUC (%)", ascending=False
+        by="ROC AUC (%)",
+        ascending=False
     ).iloc[0]
 
     best_model_name = best_row["Model"]
     best_model = trained_models[best_model_name]
 
     st.success(
-        f"Model terbaik: **{best_model_name}** "
+        f"🏆 Model terbaik: **{best_model_name}** "
         f"(ROC AUC = {best_row['ROC AUC (%)']}%)"
     )
 
     # ===============================
     # 10. Confusion Matrix
     # ===============================
-    st.subheader("Confusion Matrix – Model Terbaik")
+    st.subheader("🧮 Confusion Matrix")
 
-    y_best_pred = best_model.predict(X_test)
-    cm = confusion_matrix(y_test, y_best_pred)
-
+    cm = confusion_matrix(y_test, best_model.predict(X_test))
     cm_df = pd.DataFrame(
         cm,
         index=["Actual 0", "Actual 1"],
@@ -181,11 +194,11 @@ def ml_model():
     # ===============================
     # 11. Insight
     # ===============================
-    st.subheader("Insight")
+    st.subheader("📝 Insight Model")
     st.markdown("""
     - Model digunakan untuk **prediksi risiko penyakit kardiovaskular**
-    - **ROC AUC tinggi** menunjukkan kemampuan diskriminasi yang baik
-    - Cocok sebagai **alat skrining awal**, bukan diagnosis final
+    - Nilai **ROC AUC tinggi** menandakan performa klasifikasi yang baik
+    - Model **bukan alat diagnosis**, tetapi **alat bantu skrining awal**
     """)
 
     # ===============================
