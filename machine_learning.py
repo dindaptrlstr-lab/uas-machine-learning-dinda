@@ -9,7 +9,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
-from catboost import CatBoostClassifier
 
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score,
@@ -18,6 +17,15 @@ from sklearn.metrics import (
 
 from imblearn.over_sampling import SMOTE
 import joblib
+
+# ===============================
+# SAFE CATBOOST IMPORT
+# ===============================
+try:
+    from catboost import CatBoostClassifier
+    CATBOOST_AVAILABLE = True
+except ModuleNotFoundError:
+    CATBOOST_AVAILABLE = False
 
 
 def ml_model():
@@ -75,7 +83,7 @@ def ml_model():
     X_train_bal, y_train_bal = smote.fit_resample(X_train, y_train)
 
     # ===============================
-    # 7. Model List (CATBOOST CPU MODE)
+    # 7. Model List (SAFE)
     # ===============================
     models = {
         "Logistic Regression": LogisticRegression(max_iter=1000),
@@ -84,9 +92,10 @@ def ml_model():
             n_estimators=100, random_state=42
         ),
         "SVM": SVC(probability=True, random_state=42),
+    }
 
-        # ✅ CATBOOST CPU-ONLY (WAJIB UNTUK STREAMLIT CLOUD)
-        "CatBoost": CatBoostClassifier(
+    if CATBOOST_AVAILABLE:
+        models["CatBoost"] = CatBoostClassifier(
             iterations=200,
             depth=6,
             learning_rate=0.1,
@@ -95,7 +104,8 @@ def ml_model():
             task_type="CPU",
             random_state=42
         )
-    }
+    else:
+        st.warning("⚠️ CatBoost tidak tersedia di server. Model lain tetap dijalankan.")
 
     # ===============================
     # 8. Training & Evaluation
@@ -125,18 +135,18 @@ def ml_model():
     st.dataframe(result_df)
 
     # ===============================
-    # 9. Model Terbaik
+    # 9. Best Model
     # ===============================
-    best_model_row = result_df.sort_values(
+    best_row = result_df.sort_values(
         "ROC AUC (%)", ascending=False
     ).iloc[0]
 
-    best_model_name = best_model_row["Model"]
+    best_model_name = best_row["Model"]
     best_model = trained_models[best_model_name]
 
     st.success(
         f"Model terbaik: **{best_model_name}** "
-        f"(ROC AUC = {best_model_row['ROC AUC (%)']}%)"
+        f"(ROC AUC = {best_row['ROC AUC (%)']}%)"
     )
 
     # ===============================
