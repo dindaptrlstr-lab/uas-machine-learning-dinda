@@ -137,7 +137,7 @@ def ml_model():
     # ===============================
     # 8. Training & Evaluation
     # ===============================
-    st.subheader("📊 Evaluasi Model")
+    st.subheader("Evaluasi Model")
 
     results = []
     trained_models = {}
@@ -173,14 +173,14 @@ def ml_model():
     best_model = trained_models[best_model_name]
 
     st.success(
-        f"🏆 Model terbaik: **{best_model_name}** "
+        f"Model terbaik: **{best_model_name}** "
         f"(ROC AUC = {best_row['ROC AUC (%)']}%)"
     )
 
     # ===============================
     # 10. Confusion Matrix
     # ===============================
-    st.subheader("🧮 Confusion Matrix")
+    st.subheader("Confusion Matrix")
 
     cm = confusion_matrix(y_test, best_model.predict(X_test))
     cm_df = pd.DataFrame(
@@ -194,7 +194,7 @@ def ml_model():
     # ===============================
     # 11. Insight
     # ===============================
-    st.subheader("📝 Insight Model")
+    st.subheader("Insight Model")
     st.markdown("""
     - Model digunakan untuk **prediksi risiko penyakit kardiovaskular**
     - Nilai **ROC AUC tinggi** menandakan performa klasifikasi yang baik
