@@ -32,7 +32,7 @@ except ModuleNotFoundError:
 
 
 def ml_model():
-    st.header("🤖 Machine Learning – Cardiovascular Disease")
+    st.header("Machine Learning – Cardiovascular Disease")
 
     # ===============================
     # 1. Load Dataset (SAFE)
