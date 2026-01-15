@@ -9,8 +9,6 @@ def about_dataset():
         link = "https://myhealthcentre.ca/wp-content/uploads/2025/03/17096-819x583.jpg" 
         st.image(link, caption="Health & Environmental Dataset")
 
-        with col1:
-
     with col2:
         st.write(
             "Dataset yang digunakan dalam penelitian ini terdiri dari dua sumber utama, "
