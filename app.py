@@ -13,12 +13,12 @@ st.set_page_config(
 # ===============================
 # Header
 # ===============================
-st.title("❤️ Cardiovascular Disease & 🌫️ Air Quality Analysis")
+st.title("Cardiovascular Disease & Air Quality Analysis")
 st.caption(
     "Aplikasi Analisis Data Kesehatan dan Lingkungan "
     "Menggunakan Machine Learning"
 )
-st.caption("📍 Semarang, 12 Januari 2026")
+st.caption("Semarang, 12 Januari 2026")
 
 st.divider()
 
@@ -26,11 +26,11 @@ st.divider()
 # Tabs
 # ===============================
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "📂 About Dataset",
-    "📊 Dashboards",
-    "🤖 Machine Learning",
-    "🔮 Prediction App",
-    "📬 Contact Me"
+    "About Dataset",
+    "Dashboards",
+    "Machine Learning",
+    "Prediction App",
+    "Contact Me"
 ])
 
 # ===============================
