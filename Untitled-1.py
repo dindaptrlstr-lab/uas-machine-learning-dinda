@@ -3,129 +3,138 @@ import pandas as pd
 import plotly.express as px
 
 # ===============================
+# Page Config
+# ===============================
+st.set_page_config(
+    page_title="Health & Air Quality Analysis",
+    layout="wide"
+)
+
+st.title("❤️ Cardiovascular Disease & 🌫️ Air Quality Analysis")
+
+# ===============================
 # Load Dataset
 # ===============================
-df = pd.read_csv('healthcare-dataset-stroke-data.csv')
+@st.cache_data
+def load_cardio():
+    return pd.read_csv("cardiovascular.csv", sep=";")
 
-st.header("Exploratory Data Analysis (EDA)")
-st.write("Dataset Stroke Prediction")
+@st.cache_data
+def load_air():
+    return pd.read_csv("air_quality.csv", sep=";", decimal=",")
 
-# ===============================
-# 1. Dataset
-# ===============================
-st.write('**1. Preview Dataset**')
-st.dataframe(df.head())
-
-# ===============================
-# 2. Distribusi Usia Pasien
-# ===============================
-st.write('**2. Distribusi Usia Pasien**')
-age_dist = df['age'].value_counts().sort_index()
-st.line_chart(age_dist)
+try:
+    cardio_df = load_cardio()
+    air_df = load_air()
+except:
+    st.error("❌ Dataset tidak ditemukan. Pastikan file CSV ada di repo.")
+    st.stop()
 
 # ===============================
-# 3. Jenis Kelamin
+# SECTION 1: CARDIOVASCULAR
 # ===============================
-st.write('**3. Distribusi Jenis Kelamin**')
-gender_df = df['gender'].value_counts().reset_index()
-gender_df.columns = ['Gender', 'Jumlah']
-fig_gender = px.pie(
-    gender_df,
-    names='Gender',
-    values='Jumlah',
-    title='Distribusi Jenis Kelamin Pasien'
-)
-st.plotly_chart(fig_gender, use_container_width=True)
+st.header("📊 Cardiovascular Disease Dataset")
+
+st.subheader("1️⃣ Preview Dataset")
+st.dataframe(cardio_df.head(), use_container_width=True)
 
 # ===============================
-# 4. Status Stroke
+# Distribusi Umur
 # ===============================
-st.write('**4. Status Stroke**')
-stroke_df = df['stroke'].value_counts().reset_index()
-stroke_df.columns = ['Stroke', 'Jumlah']
-fig_stroke = px.bar(
-    stroke_df,
-    x='Stroke',
-    y='Jumlah',
-    title='Distribusi Pasien Stroke vs Non-Stroke'
-)
-st.plotly_chart(fig_stroke, use_container_width=True)
+st.subheader("2️⃣ Distribusi Usia Pasien")
 
-# ===============================
-# 5. Tipe Pekerjaan
-# ===============================
-st.write('**5. Distribusi Tipe Pekerjaan**')
-st.bar_chart(df['work_type'].value_counts())
+cardio_df["age_years"] = cardio_df["age"] // 365
 
-# ===============================
-# 6. Status Merokok
-# ===============================
-st.write('**6. Distribusi Status Merokok**')
-st.bar_chart(df['smoking_status'].value_counts())
-
-# ===============================
-# 7. Penyakit Penyerta
-# ===============================
-st.write('**7. Penyakit Penyerta**')
-
-col1, col2 = st.columns(2)
-
-with col1:
-    st.write('Hypertension')
-    st.bar_chart(df['hypertension'].value_counts())
-
-with col2:
-    st.write('Heart Disease')
-    st.bar_chart(df['heart_disease'].value_counts())
-
-# ===============================
-# 8. Filter Interaktif
-# ===============================
-st.write('**8. Filter Data Pasien**')
-
-gender_filter = st.multiselect(
-    "Pilih Jenis Kelamin",
-    df['gender'].unique(),
-    default=df['gender'].unique()
+st.line_chart(
+    cardio_df["age_years"].value_counts().sort_index()
 )
 
-stroke_filter = st.selectbox(
-    "Status Stroke",
-    ['All', 0, 1]
+# ===============================
+# Status Penyakit Jantung
+# ===============================
+st.subheader("3️⃣ Status Penyakit Kardiovaskular")
+
+cardio_target = cardio_df["cardio"].value_counts().reset_index()
+cardio_target.columns = ["Cardio", "Jumlah"]
+
+fig_cardio = px.bar(
+    cardio_target,
+    x="Cardio",
+    y="Jumlah",
+    text="Jumlah"
+)
+st.plotly_chart(fig_cardio, use_container_width=True)
+
+# ===============================
+# Tekanan Darah
+# ===============================
+st.subheader("4️⃣ Tekanan Darah")
+
+fig_bp = px.scatter(
+    cardio_df,
+    x="ap_hi",
+    y="ap_lo",
+    color="cardio",
+    labels={"ap_hi": "Sistolik", "ap_lo": "Diastolik"}
+)
+st.plotly_chart(fig_bp, use_container_width=True)
+
+# ===============================
+# SECTION 2: AIR QUALITY
+# ===============================
+st.header("🌫️ Air Quality Dataset")
+
+st.subheader("5️⃣ Preview Dataset")
+st.dataframe(air_df.head(), use_container_width=True)
+
+# ===============================
+# Cleaning Air Quality
+# ===============================
+air_df.replace(-200, pd.NA, inplace=True)
+air_df.dropna(inplace=True)
+
+# ===============================
+# Polutan Udara
+# ===============================
+st.subheader("6️⃣ Distribusi Polutan Udara")
+
+pollutant = st.selectbox(
+    "Pilih Polutan",
+    ["CO(GT)", "NO2(GT)", "NOx(GT)", "C6H6(GT)"]
 )
 
-filtered_df = df[df['gender'].isin(gender_filter)]
-
-if stroke_filter != 'All':
-    filtered_df = filtered_df[filtered_df['stroke'] == stroke_filter]
-
-st.write("Data setelah difilter:")
-st.dataframe(filtered_df)
+fig_pollutant = px.line(
+    air_df,
+    y=pollutant,
+    title=f"Tren {pollutant}"
+)
+st.plotly_chart(fig_pollutant, use_container_width=True)
 
 # ===============================
-# 9. Korelasi Numerik
+# Korelasi Polutan
 # ===============================
-st.write('**9. Korelasi Fitur Numerik**')
-numeric_df = df[['age', 'avg_glucose_level', 'bmi', 'stroke']]
+st.subheader("7️⃣ Korelasi Polutan")
+
+pollution_cols = [
+    "CO(GT)", "NO2(GT)", "NOx(GT)", "C6H6(GT)", "T", "RH"
+]
+
+corr_df = air_df[pollution_cols]
+
 fig_corr = px.imshow(
-    numeric_df.corr(),
-    text_auto=True,
-    title="Heatmap Korelasi"
+    corr_df.corr(),
+    text_auto=".2f",
+    aspect="auto"
 )
 st.plotly_chart(fig_corr, use_container_width=True)
 
 # ===============================
-# 10. Informasi Dataset
+# INSIGHT
 # ===============================
-st.write('**10. Informasi Dataset**')
-st.write(f"Jumlah Data: {df.shape[0]}")
-st.write(f"Jumlah Fitur: {df.shape[1]}")
+st.header("📌 Insight Awal")
 
-# ===============================
-# 11. Gambar Ilustrasi
-# ===============================
-st.write('**11. Ilustrasi Kesehatan**')
-st.image(
-    "https://unair.ac.id/wp-content/uploads/2023/04/Foto-by-Kompas-Money.jpg",
-    caption="Ilustrasi Rumah Sakit"
-)
+st.markdown("""
+- Dataset **Cardiovascular** cocok untuk **Logistic Regression, Random Forest, SVM**
+- Dataset **Air Quality** cocok untuk **Regresi & Time Series**
+- Bisa dikombinasikan untuk analisis **pengaruh kualitas udara terhadap risiko kardiovaskular**
+""")
