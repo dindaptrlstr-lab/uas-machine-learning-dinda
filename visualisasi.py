@@ -4,7 +4,7 @@ import altair as alt
 
 
 def chart():
-    st.header("📊 Dashboard Analisis Data")
+    st.header("Dashboard Analisis Data")
 
     # ===============================
     # Load Dataset (SAFE)
@@ -39,13 +39,13 @@ def chart():
     # ===============================
     # Preview Dataset Cardio
     # ===============================
-    st.subheader("📁 Preview Dataset Kardiovaskular")
+    st.subheader("Preview Dataset Kardiovaskular")
     st.dataframe(cardio.head(), use_container_width=True)
 
     # ===============================
     # Gender Distribution (Pie)
     # ===============================
-    st.subheader("👥 Distribusi Gender")
+    st.subheader("Distribusi Gender")
 
     gender_count = cardio["gender"].value_counts().reset_index()
     gender_count.columns = ["Gender", "Jumlah"]
@@ -61,7 +61,7 @@ def chart():
     # ===============================
     # Age vs Cardio (Boxplot)
     # ===============================
-    st.subheader("📈 Usia vs Risiko Kardiovaskular")
+    st.subheader("Usia vs Risiko Kardiovaskular")
 
     box = alt.Chart(cardio).mark_boxplot().encode(
         x=alt.X("cardio:N", title="Status Kardiovaskular (0 = Tidak, 1 = Ya)"),
@@ -76,5 +76,5 @@ def chart():
     # ===============================
     # Air Quality Preview
     # ===============================
-    st.subheader("🌫️ Preview Dataset Air Quality")
+    st.subheader("Preview Dataset Air Quality")
     st.dataframe(air.head(), use_container_width=True)
