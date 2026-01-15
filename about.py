@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 def about_dataset():
-    st.subheader("📂 Tentang Dataset")
+    st.subheader("Tentang Dataset")
 
     col1, col2 = st.columns(2)
 
