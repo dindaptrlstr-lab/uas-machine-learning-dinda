@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("❤️ Cardiovascular Disease & 🌫️ Air Quality Analysis")
+st.title("Cardiovascular Disease & Air Quality Analysis")
 
 # ===============================
 # Load Dataset
@@ -82,7 +82,7 @@ st.plotly_chart(fig_bp, use_container_width=True)
 # ===============================
 # SECTION 2: AIR QUALITY
 # ===============================
-st.header("🌫️ Air Quality Dataset")
+st.header("Air Quality Dataset")
 
 st.subheader("5️⃣ Preview Dataset")
 st.dataframe(air_df.head(), use_container_width=True)
