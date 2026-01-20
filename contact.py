@@ -4,11 +4,12 @@ def contact_page():
     st.subheader("📞 Contact")
 
     st.write("""
-    **Nama Mahasiswa:Zulfa Septilia**  
-    **Program Studi:Sains Data**  
+    **Nama Mahasiswa:Dinda Putri Lestari**  
+    **Program Studi: S1 Sains Data**  
     **Universitas:Universitas Muhammadiyah Semarang**
 
-    📧 Email: septiliazulfa@gmail.com 
+    📧 Email: dindaptrlstr@gmail.com 
              
-    🔗 GitHub: https://github.com/septiliazulfa-ui  
+    🔗 GitHub: https://github.com/dindaptrlstr-lab
     """)
+
