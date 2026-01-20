@@ -10,7 +10,8 @@ def sidebar_upload():
     )
 
     if uploaded_file:
-        df = pd.read_csv(uploaded_file)
+        # 🔥 AUTO-DETECT DELIMITER
+        df = pd.read_csv(uploaded_file, sep=None, engine="python")
 
         st.session_state["df"] = df
         st.session_state["dataset_name"] = uploaded_file.name
@@ -28,5 +29,3 @@ def sidebar_upload():
             return
 
         st.sidebar.success("Dataset berhasil dimuat ✅")
-
-
