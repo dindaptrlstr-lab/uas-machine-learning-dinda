@@ -2,32 +2,39 @@ import streamlit as st
 import pandas as pd
 
 def sidebar_upload():
-    st.sidebar.title("📂 Dataset")
-
-    dataset_type = st.sidebar.selectbox(
-        "Jenis Dataset",
-        ["Lingkungan", "Kesehatan"]
-    )
+    st.sidebar.title("📂 Upload Dataset")
 
     uploaded_file = st.sidebar.file_uploader(
-        "Upload Dataset (CSV)",
+        "Upload file CSV",
         type=["csv"]
     )
 
-    if uploaded_file is not None:
-        # ===== FIX DELIMITER CSV =====
-        try:
-            df = pd.read_csv(uploaded_file, sep=";")
-        except:
-            df = pd.read_csv(uploaded_file)
+    if uploaded_file:
+        if uploaded_file.name not in [
+            "water_potability.csv",
+            "cardio_train.csv"
+        ]:
+            st.sidebar.error(
+                "Dataset tidak valid.\n"
+                "Gunakan:\n"
+                "- water_potability.csv\n"
+                "- cardio_train.csv"
+            )
+            return
 
-        # ===== SIMPAN KE SESSION STATE =====
+        df = pd.read_csv(uploaded_file)
+
+        # SIMPAN GLOBAL
         st.session_state["df"] = df
-        st.session_state["dataset_type"] = dataset_type
+        st.session_state["dataset_name"] = uploaded_file.name
 
-        st.sidebar.success("Dataset berhasil diupload!")
+        st.sidebar.success("Dataset berhasil dimuat ✅")
 
-    # ===== INFO DATASET =====
-    if "df" in st.session_state:
-        st.sidebar.write("📊 Shape:", st.session_state["df"].shape)
-        st.sidebar.write("📌 Kolom:", list(st.session_state["df"].columns))
+        # SET TARGET OTOMATIS
+        if uploaded_file.name == "water_potability.csv":
+            st.session_state["target_col"] = "Potability"
+            st.session_state["dataset_type"] = "Lingkungan"
+
+        elif uploaded_file.name == "cardio_train.csv":
+            st.session_state["target_col"] = "cardio"
+            st.session_state["dataset_type"] = "Kesehatan"
