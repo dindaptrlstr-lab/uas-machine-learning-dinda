@@ -1,3 +1,6 @@
+import streamlit as st
+
+
 def ml_model():
     st.header("Machine Learning – Water Potability")
 
