@@ -3,20 +3,22 @@ import plotly.express as px
 import pandas as pd
 
 def dashboard_page():
+
     # ===== PENGAMAN =====
-    if "df" not in st.session_state:
+    if "df" not in st.session_state or "dataset_type" not in st.session_state:
         st.warning("Silakan upload dataset terlebih dahulu.")
         return
 
     df = st.session_state["df"]
-    dataset_type = st.session_state.get("dataset_type")
+    dataset_type = st.session_state["dataset_type"]
+    target_col = st.session_state["target_col"]
 
-    st.title("📊 Dashboards")
+    st.title("📊 Dashboards & Exploratory Data Analysis")
 
     # =========================================================
-    # 🔍 EDA – Exploratory Data Analysis (UMUM)
+    # 🔍 EDA UMUM
     # =========================================================
-    st.subheader("🔍 Exploratory Data Analysis (EDA)")
+    st.subheader("🔍 Exploratory Data Analysis (Umum)")
 
     col1, col2, col3 = st.columns(3)
     col1.metric("Jumlah Data", df.shape[0])
@@ -29,8 +31,9 @@ def dashboard_page():
     st.write("### 📊 Statistik Deskriptif")
     st.dataframe(df.describe(), use_container_width=True)
 
-    # Heatmap Korelasi (numerik saja)
+    # ===== HEATMAP KORELASI =====
     numeric_df = df.select_dtypes(include="number")
+
     if numeric_df.shape[1] > 1:
         corr = numeric_df.corr()
         fig = px.imshow(
@@ -43,142 +46,100 @@ def dashboard_page():
     st.markdown("---")
 
     # =========================================================
-    # 🌱 DATASET LINGKUNGAN – OCCUPANCY DETECTION
+    # 🌱 DATASET LINGKUNGAN – WATER POTABILITY
     # =========================================================
     if dataset_type == "Lingkungan":
 
-        st.subheader("🌱 Dashboard Lingkungan – Occupancy Detection")
+        st.subheader("🌱 Dashboard Lingkungan – Water Potability")
 
         total_data = df.shape[0]
-        occupied = df["Occupancy"].sum()
-        occupancy_rate = (occupied / total_data) * 100
+        potable = df[target_col].sum()
+        rate = (potable / total_data) * 100
 
         col1, col2, col3 = st.columns(3)
-        col1.metric("Total Data", total_data)
-        col2.metric("Ruang Terisi", occupied)
-        col3.metric("Persentase Terisi", f"{occupancy_rate:.2f}%")
+        col1.metric("Total Sampel Air", total_data)
+        col2.metric("Air Layak Minum", potable)
+        col3.metric("Persentase Layak", f"{rate:.2f}%")
 
         st.dataframe(df.head(), use_container_width=True)
 
-        # ===== PIE CHART =====
-        col1, col2 = st.columns(2)
-
-        with col1:
-            fig = px.pie(
-                df,
-                names="Occupancy",
-                title="Status Occupancy (0 = Kosong, 1 = Terisi)"
-            )
-            st.plotly_chart(fig, use_container_width=True)
-
-        with col2:
-            fig = px.pie(
-                df,
-                values="Light",
-                names="Occupancy",
-                title="Distribusi Cahaya terhadap Occupancy"
-            )
-            st.plotly_chart(fig, use_container_width=True)
+        # ===== PIE TARGET =====
+        fig = px.pie(
+            df,
+            names=target_col,
+            title="Distribusi Kelayakan Air (0 = Tidak Layak, 1 = Layak)"
+        )
+        st.plotly_chart(fig, use_container_width=True)
 
         # ===== HISTOGRAM =====
         fig = px.histogram(
             df,
-            x="Temperature",
+            x="ph",
             nbins=30,
-            title="Distribusi Temperature"
+            title="Distribusi pH Air"
         )
         st.plotly_chart(fig, use_container_width=True)
 
         # ===== SCATTER =====
         fig = px.scatter(
             df,
-            x="CO2",
-            y="Humidity",
-            color="Occupancy",
-            title="CO2 vs Humidity"
+            x="Solids",
+            y="Turbidity",
+            color=target_col,
+            title="Solids vs Turbidity"
         )
         st.plotly_chart(fig, use_container_width=True)
 
         # ===== BOX PLOT =====
         fig = px.box(
             df,
-            x="Occupancy",
-            y="Temperature",
-            title="Distribusi Temperature berdasarkan Occupancy"
-        )
-        st.plotly_chart(fig, use_container_width=True)
-
-        # ===== LINE CHART =====
-        df_time = df.copy()
-        df_time["date"] = pd.to_datetime(df_time["date"])
-
-        occupancy_time = (
-            df_time.groupby(df_time["date"].dt.hour)["Occupancy"]
-            .mean()
-            .reset_index()
-        )
-
-        fig = px.line(
-            occupancy_time,
-            x="date",
-            y="Occupancy",
-            title="Rata-rata Occupancy berdasarkan Jam"
+            x=target_col,
+            y="Hardness",
+            title="Hardness berdasarkan Kelayakan Air"
         )
         st.plotly_chart(fig, use_container_width=True)
 
     # =========================================================
-    # 🏥 DATASET KESEHATAN – MATERNAL HEALTH
+    # 🏥 DATASET KESEHATAN – CARDIOVASCULAR
     # =========================================================
     elif dataset_type == "Kesehatan":
 
-        st.subheader("🏥 Dashboard Kesehatan – Maternal Health Risk")
+        st.subheader("🏥 Dashboard Kesehatan – Cardiovascular Disease")
 
         total_data = df.shape[0]
-        high_risk = (df["RiskLevel"] == "high risk").sum()
-        risk_rate = (high_risk / total_data) * 100
+        risk = df[target_col].sum()
+        rate = (risk / total_data) * 100
 
         col1, col2, col3 = st.columns(3)
         col1.metric("Total Pasien", total_data)
-        col2.metric("High Risk", high_risk)
-        col3.metric("Persentase High Risk", f"{risk_rate:.2f}%")
+        col2.metric("Pasien Berisiko", risk)
+        col3.metric("Persentase Risiko", f"{rate:.2f}%")
 
         st.dataframe(df.head(), use_container_width=True)
 
-        # ===== PIE CHART =====
-        col1, col2 = st.columns(2)
-
-        with col1:
-            fig = px.pie(
-                df,
-                names="RiskLevel",
-                title="Distribusi Risk Level"
-            )
-            st.plotly_chart(fig, use_container_width=True)
-
-        with col2:
-            fig = px.pie(
-                df,
-                values="HeartRate",
-                names="RiskLevel",
-                title="Heart Rate berdasarkan Risk Level"
-            )
-            st.plotly_chart(fig, use_container_width=True)
+        # ===== PIE TARGET =====
+        fig = px.pie(
+            df,
+            names=target_col,
+            title="Distribusi Risiko Penyakit Jantung"
+        )
+        st.plotly_chart(fig, use_container_width=True)
 
         # ===== HISTOGRAM =====
         fig = px.histogram(
             df,
-            x="Age",
+            x="age",
             nbins=30,
-            title="Distribusi Umur Pasien"
+            title="Distribusi Usia Pasien"
         )
         st.plotly_chart(fig, use_container_width=True)
 
         # ===== SCATTER =====
         fig = px.scatter(
             df,
-            x="SystolicBP",
-            y="DiastolicBP",
-            color="RiskLevel",
+            x="ap_hi",
+            y="ap_lo",
+            color=target_col,
             title="Tekanan Darah Sistolik vs Diastolik"
         )
         st.plotly_chart(fig, use_container_width=True)
@@ -186,22 +147,8 @@ def dashboard_page():
         # ===== BOX PLOT =====
         fig = px.box(
             df,
-            x="RiskLevel",
-            y="BS",
-            title="Distribusi Blood Sugar berdasarkan Risk Level"
-        )
-        st.plotly_chart(fig, use_container_width=True)
-
-        # ===== LINE CHART =====
-        age_risk = df.groupby(
-            ["Age", "RiskLevel"]
-        ).size().reset_index(name="count")
-
-        fig = px.line(
-            age_risk,
-            x="Age",
-            y="count",
-            color="RiskLevel",
-            title="Distribusi Risiko berdasarkan Umur"
+            x=target_col,
+            y="cholesterol",
+            title="Kolesterol berdasarkan Risiko"
         )
         st.plotly_chart(fig, use_container_width=True)
