@@ -1,99 +1,60 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
-
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import SVC
-
-from sklearn.metrics import (
-    accuracy_score,
-    precision_score,
-    recall_score,
-    f1_score,
-    roc_auc_score,
-    confusion_matrix
-)
-
-from imblearn.over_sampling import SMOTE
-import joblib
-
-# ===============================
-# SAFE CATBOOST IMPORT
-# ===============================
-try:
-    from catboost import CatBoostClassifier
-    CATBOOST_AVAILABLE = True
-except ModuleNotFoundError:
-    CATBOOST_AVAILABLE = False
-
-
 def ml_model():
-    st.header("Machine Learning – Cardiovascular Disease")
+    st.header("Machine Learning – Water Potability")
 
     # ===============================
-    # 1. Load Dataset (SAFE)
+    # 1. Load Dataset
     # ===============================
     try:
-        df = pd.read_csv("cardio_train.csv", sep=";")
-    except Exception as e:
-        st.error("❌ Gagal memuat dataset cardio_train.csv")
+        df = pd.read_csv("water_potability.csv")
+    except:
+        st.error("❌ Gagal memuat dataset water_potability.csv")
         st.stop()
 
-    # Drop ID jika ada
-    if "id" in df.columns:
-        df.drop(columns=["id"], inplace=True)
-
-    # Cek target
-    target = "cardio"
+    # ===============================
+    # 2. Target Check
+    # ===============================
+    target = "Potability"
     if target not in df.columns:
-        st.error("❌ Kolom target 'cardio' tidak ditemukan")
+        st.error("❌ Kolom target 'Potability' tidak ditemukan")
         st.stop()
 
     # ===============================
-    # 2. Outlier Handling (IQR)
+    # 3. Missing Value Handling
     # ===============================
-    numeric_cols = (
-        df.drop(columns=[target])
-        .select_dtypes(include="number")
-        .columns
-    )
+    before = df.shape[0]
+    df = df.dropna()
+    after = df.shape[0]
+
+    st.write(f"📌 Data sebelum drop NA: **{before}**")
+    st.write(f"📌 Data setelah drop NA: **{after}**")
+
+    # ===============================
+    # 4. Outlier Handling (IQR)
+    # ===============================
+    numeric_cols = df.drop(columns=[target]).columns
 
     Q1 = df[numeric_cols].quantile(0.25)
     Q3 = df[numeric_cols].quantile(0.75)
     IQR = Q3 - Q1
 
-    before = df.shape[0]
     df = df[
         ~(
             (df[numeric_cols] < (Q1 - 1.5 * IQR)) |
             (df[numeric_cols] > (Q3 + 1.5 * IQR))
         ).any(axis=1)
     ]
-    after = df.shape[0]
-
-    st.write(f"📌 Data sebelum outlier removal: **{before}**")
-    st.write(f"📌 Data setelah outlier removal: **{after}**")
 
     # ===============================
-    # 3. Encoding
-    # ===============================
-    df_model = pd.get_dummies(df, drop_first=True)
-
-    # ===============================
-    # 4. Normalisasi
+    # 5. Normalisasi
     # ===============================
     scaler = MinMaxScaler()
-    df_model[numeric_cols] = scaler.fit_transform(df_model[numeric_cols])
+    df[numeric_cols] = scaler.fit_transform(df[numeric_cols])
 
     # ===============================
-    # 5. Train Test Split
+    # 6. Train Test Split
     # ===============================
-    X = df_model.drop(columns=[target])
-    y = df_model[target]
+    X = df.drop(columns=[target])
+    y = df[target]
 
     X_train, X_test, y_train, y_test = train_test_split(
         X,
@@ -104,13 +65,13 @@ def ml_model():
     )
 
     # ===============================
-    # 6. SMOTE
+    # 7. SMOTE
     # ===============================
     smote = SMOTE(random_state=42)
     X_train_bal, y_train_bal = smote.fit_resample(X_train, y_train)
 
     # ===============================
-    # 7. Model List
+    # 8. Model List
     # ===============================
     models = {
         "Logistic Regression": LogisticRegression(max_iter=1000),
@@ -131,11 +92,9 @@ def ml_model():
             verbose=False,
             random_state=42
         )
-    else:
-        st.warning("⚠️ CatBoost tidak tersedia. Model lain tetap dijalankan.")
 
     # ===============================
-    # 8. Training & Evaluation
+    # 9. Training & Evaluation
     # ===============================
     st.subheader("Evaluasi Model")
 
@@ -162,7 +121,7 @@ def ml_model():
     st.dataframe(result_df, use_container_width=True)
 
     # ===============================
-    # 9. Best Model
+    # 10. Best Model
     # ===============================
     best_row = result_df.sort_values(
         by="ROC AUC (%)",
@@ -178,32 +137,32 @@ def ml_model():
     )
 
     # ===============================
-    # 10. Confusion Matrix
+    # 11. Confusion Matrix
     # ===============================
     st.subheader("Confusion Matrix")
 
     cm = confusion_matrix(y_test, best_model.predict(X_test))
     cm_df = pd.DataFrame(
         cm,
-        index=["Actual 0", "Actual 1"],
+        index=["Actual 0 (Tidak Layak)", "Actual 1 (Layak)"],
         columns=["Predicted 0", "Predicted 1"]
     )
 
     st.dataframe(cm_df)
 
     # ===============================
-    # 11. Insight
+    # 12. Insight
     # ===============================
     st.subheader("Insight Model")
     st.markdown("""
-    - Model digunakan untuk **prediksi risiko penyakit kardiovaskular**
-    - Nilai **ROC AUC tinggi** menandakan performa klasifikasi yang baik
-    - Model **bukan alat diagnosis**, tetapi **alat bantu skrining awal**
+    - Model digunakan untuk **prediksi kelayakan air minum**
+    - **ROC AUC tinggi** menunjukkan model mampu membedakan air layak & tidak layak
+    - Model **bukan pengganti uji laboratorium**, tetapi **alat bantu analisis awal**
     """)
 
     # ===============================
-    # 12. Save Model
+    # 13. Save Model
     # ===============================
-    joblib.dump(best_model, "best_model_cardio.pkl")
+    joblib.dump(best_model, "best_model_water.pkl")
     joblib.dump(X.columns, "model_features.pkl")
     joblib.dump(numeric_cols, "numeric_columns.pkl")
