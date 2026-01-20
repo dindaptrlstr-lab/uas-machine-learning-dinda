@@ -12,29 +12,61 @@ def show_about():
         return
 
     df = st.session_state["df"]
-    dataset_type = st.session_state.get("dataset_type", "Tidak diketahui")
+    dataset_name = st.session_state.get("dataset_name", "Tidak diketahui")
 
     # =========================
     # DESKRIPSI DATASET
     # =========================
     st.subheader("📂 Informasi Umum Dataset")
 
-    if dataset_type == "Lingkungan":
+    if dataset_name == "water_potability.csv":
         st.write("""
-        Dataset **Lingkungan (Occupancy Detection)** digunakan untuk
-        memprediksi apakah suatu ruangan **terisi atau tidak**
-        berdasarkan kondisi lingkungan seperti suhu, kelembaban,
-        cahaya, dan kadar CO₂.
+        **Water Potability Dataset** digunakan untuk
+        mengklasifikasikan apakah air **layak dikonsumsi (potable)**
+        atau **tidak layak** berdasarkan parameter kualitas air.
+
+        **Contoh fitur utama:**
+        - pH
+        - Hardness
+        - Solids
+        - Chloramines
+        - Sulfate
+        - Conductivity
+        - Organic Carbon
+        - Trihalomethanes
+        - Turbidity
+
+        **Target:**
+        - `Potability` (0 = Tidak Layak, 1 = Layak)
         """)
-    elif dataset_type == "Kesehatan":
+
+        dataset_type = "Lingkungan"
+
+    elif dataset_name == "cardio_train.csv":
         st.write("""
-        Dataset **Kesehatan (Maternal Health Risk)** digunakan untuk
-        mengklasifikasikan tingkat risiko kesehatan ibu hamil
-        berdasarkan indikator medis seperti tekanan darah,
-        kadar gula darah, suhu tubuh, dan denyut jantung.
+        **Cardiovascular Disease Dataset** digunakan untuk
+        memprediksi **risiko penyakit kardiovaskular**
+        berdasarkan data klinis pasien.
+
+        **Contoh fitur utama:**
+        - Usia
+        - Jenis Kelamin
+        - Tekanan Darah
+        - Kolesterol
+        - Glukosa
+        - BMI
+        - Kebiasaan merokok
+        - Aktivitas fisik
+
+        **Target:**
+        - `cardio` (0 = Tidak Berisiko, 1 = Berisiko)
         """)
+
+        dataset_type = "Kesehatan"
+
     else:
-        st.write("Dataset yang digunakan diunggah oleh pengguna.")
+        st.write("Dataset diunggah oleh pengguna.")
+        dataset_type = "Tidak diketahui"
 
     # =========================
     # RINGKASAN DATASET
@@ -65,11 +97,29 @@ def show_about():
     st.dataframe(df.head(), use_container_width=True)
 
     # =========================
-    # CATATAN KHUSUS
+    # METODE MACHINE LEARNING
+    # =========================
+    st.subheader("🤖 Metode Machine Learning yang Digunakan")
+
+    st.markdown("""
+    Model klasifikasi yang digunakan dalam aplikasi ini:
+
+    - **Logistic Regression**
+    - **Decision Tree**
+    - **Random Forest**
+    - **Support Vector Machine (SVM)**
+    - **CatBoost Classifier**
+
+    Model-model ini digunakan untuk membandingkan performa prediksi
+    berdasarkan akurasi, precision, recall, F1-score, dan ROC-AUC.
+    """)
+
+    # =========================
+    # CATATAN
     # =========================
     st.info(
         "Catatan:\n"
-        "- Dataset ini bersifat **dinamis**, menyesuaikan file yang di-upload.\n"
-        "- Identifikasi fitur numerik dan kategorik dilakukan otomatis.\n"
-        "- Target klasifikasi akan digunakan pada menu **Machine Learning**."
+        "- Dataset dipilih otomatis berdasarkan file yang di-upload.\n"
+        "- Target klasifikasi akan digunakan pada menu **Machine Learning**.\n"
+        "- Data akan melalui preprocessing sebelum pemodelan."
     )
