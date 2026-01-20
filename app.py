@@ -6,16 +6,16 @@ import numpy as np
 # Page Config
 # ===============================
 st.set_page_config(
-    page_title="Cardiovascular & Air Quality Analysis",
+    page_title="Cardiovascular & Water Quality Analysis",
     layout="wide"
 )
 
 # ===============================
 # Header
 # ===============================
-st.title("Cardiovascular Disease & Air Quality Analysis")
+st.title("Cardiovascular Disease & Water Quality Analysis")
 st.caption(
-    "Aplikasi Analisis Data Kesehatan dan Lingkungan "
+    "Aplikasi Analisis Data Kesehatan dan Kualitas Air "
     "Menggunakan Machine Learning"
 )
 st.caption("Semarang, 15 Januari 2026")
@@ -65,6 +65,6 @@ with tab4:
 # Contact Me
 # ===============================
 with tab5:
-    st.subheader(" Contact Me")
+    st.subheader("📬 Contact Me")
     st.write("📧 Email : **dindaptrlstr@email.com**")
     st.write("💻 GitHub : https://github.com/dindaptrlstr-lab")
