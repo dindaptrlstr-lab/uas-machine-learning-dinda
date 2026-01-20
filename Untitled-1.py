@@ -6,11 +6,11 @@ import plotly.express as px
 # Page Config
 # ===============================
 st.set_page_config(
-    page_title="Health & Air Quality Analysis",
+    page_title="Health & Water Quality Analysis",
     layout="wide"
 )
 
-st.title("Cardiovascular Disease & Air Quality Analysis")
+st.title("Cardiovascular Disease & Water Quality Analysis")
 
 # ===============================
 # Load Dataset
@@ -20,12 +20,12 @@ def load_cardio():
     return pd.read_csv("cardiovascular.csv", sep=";")
 
 @st.cache_data
-def load_air():
-    return pd.read_csv("air_quality.csv", sep=";", decimal=",")
+def load_water():
+    return pd.read_csv("water_potability.csv")
 
 try:
     cardio_df = load_cardio()
-    air_df = load_air()
+    water_df = load_water()
 except:
     st.error("❌ Dataset tidak ditemukan. Pastikan file CSV ada di repo.")
     st.stop()
@@ -42,7 +42,6 @@ st.dataframe(cardio_df.head(), use_container_width=True)
 # Distribusi Umur
 # ===============================
 st.subheader("2️⃣ Distribusi Usia Pasien")
-
 cardio_df["age_years"] = cardio_df["age"] // 365
 
 st.line_chart(
@@ -80,49 +79,69 @@ fig_bp = px.scatter(
 st.plotly_chart(fig_bp, use_container_width=True)
 
 # ===============================
-# SECTION 2: AIR QUALITY
+# SECTION 2: WATER QUALITY
 # ===============================
-st.header("Air Quality Dataset")
+st.header("💧 Water Potability Dataset")
 
 st.subheader("5️⃣ Preview Dataset")
-st.dataframe(air_df.head(), use_container_width=True)
+st.dataframe(water_df.head(), use_container_width=True)
 
 # ===============================
-# Cleaning Air Quality
+# Cleaning Water Quality
 # ===============================
-air_df.replace(-200, pd.NA, inplace=True)
-air_df.dropna(inplace=True)
+st.subheader("6️⃣ Missing Value Check")
+st.write(water_df.isna().sum())
+
+water_df_clean = water_df.dropna()
 
 # ===============================
-# Polutan Udara
+# Distribusi Target Potability
 # ===============================
-st.subheader("6️⃣ Distribusi Polutan Udara")
+st.subheader("7️⃣ Distribusi Air Layak Minum")
 
-pollutant = st.selectbox(
-    "Pilih Polutan",
-    ["CO(GT)", "NO2(GT)", "NOx(GT)", "C6H6(GT)"]
+potability_count = water_df_clean["Potability"].value_counts().reset_index()
+potability_count.columns = ["Potability", "Jumlah"]
+
+fig_pot = px.bar(
+    potability_count,
+    x="Potability",
+    y="Jumlah",
+    text="Jumlah",
+    labels={"Potability": "Air Layak Minum (1 = Ya, 0 = Tidak)"}
+)
+st.plotly_chart(fig_pot, use_container_width=True)
+
+# ===============================
+# Parameter Air
+# ===============================
+st.subheader("8️⃣ Distribusi Parameter Kualitas Air")
+
+parameter = st.selectbox(
+    "Pilih Parameter Air",
+    [
+        "ph", "Hardness", "Solids", "Chloramines",
+        "Sulfate", "Conductivity", "Organic_carbon",
+        "Trihalomethanes", "Turbidity"
+    ]
 )
 
-fig_pollutant = px.line(
-    air_df,
-    y=pollutant,
-    title=f"Tren {pollutant}"
+fig_param = px.box(
+    water_df_clean,
+    y=parameter,
+    color="Potability",
+    title=f"Distribusi {parameter} terhadap Potability"
 )
-st.plotly_chart(fig_pollutant, use_container_width=True)
+st.plotly_chart(fig_param, use_container_width=True)
 
 # ===============================
-# Korelasi Polutan
+# Korelasi
 # ===============================
-st.subheader("7️⃣ Korelasi Polutan")
+st.subheader("9️⃣ Korelasi Parameter Air")
 
-pollution_cols = [
-    "CO(GT)", "NO2(GT)", "NOx(GT)", "C6H6(GT)", "T", "RH"
-]
-
-corr_df = air_df[pollution_cols]
+corr = water_df_clean.corr()
 
 fig_corr = px.imshow(
-    corr_df.corr(),
+    corr,
     text_auto=".2f",
     aspect="auto"
 )
@@ -135,6 +154,6 @@ st.header("📌 Insight Awal")
 
 st.markdown("""
 - Dataset **Cardiovascular** cocok untuk **Logistic Regression, Random Forest, SVM**
-- Dataset **Air Quality** cocok untuk **Regresi & Time Series**
-- Bisa dikombinasikan untuk analisis **pengaruh kualitas udara terhadap risiko kardiovaskular**
+- Dataset **Water Potability** cocok untuk **Classification & Feature Importance**
+- Bisa dikombinasikan sebagai studi **lingkungan & kesehatan masyarakat**
 """)
