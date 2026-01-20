@@ -10,27 +10,11 @@ def sidebar_upload():
     )
 
     if uploaded_file:
-        if uploaded_file.name not in [
-            "water_potability.csv",
-            "cardio_train.csv"
-        ]:
-            st.sidebar.error(
-                "Dataset tidak valid.\n"
-                "Gunakan:\n"
-                "- water_potability.csv\n"
-                "- cardio_train.csv"
-            )
-            return
-
         df = pd.read_csv(uploaded_file)
 
-        # SIMPAN GLOBAL
         st.session_state["df"] = df
         st.session_state["dataset_name"] = uploaded_file.name
 
-        st.sidebar.success("Dataset berhasil dimuat ✅")
-
-        # SET TARGET OTOMATIS
         if uploaded_file.name == "water_potability.csv":
             st.session_state["target_col"] = "Potability"
             st.session_state["dataset_type"] = "Lingkungan"
@@ -38,3 +22,11 @@ def sidebar_upload():
         elif uploaded_file.name == "cardio_train.csv":
             st.session_state["target_col"] = "cardio"
             st.session_state["dataset_type"] = "Kesehatan"
+
+        else:
+            st.sidebar.error("Dataset tidak dikenali")
+            return
+
+        st.sidebar.success("Dataset berhasil dimuat ✅")
+
+
