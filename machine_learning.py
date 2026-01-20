@@ -8,7 +8,7 @@ def ml_model():
     # 1. Load Dataset
     # ===============================
     try:
-        df = pd.read_csv("water_potability.csv")
+        df = pd.read_csv("water_potability.csv") 
     except:
         st.error("❌ Gagal memuat dataset water_potability.csv")
         st.stop()
