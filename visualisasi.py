@@ -11,7 +11,7 @@ def chart():
     # ===============================
     try:
         cardio = pd.read_csv("cardio_train.csv", sep=";")
-        air = pd.read_csv("AirQualityUCI.csv", sep=";")
+        water = pd.read_csv("water_potability.csv")
     except Exception:
         st.error("❌ Dataset tidak ditemukan. Pastikan file CSV ada di folder proyek.")
         st.stop()
@@ -27,7 +27,7 @@ def chart():
     risk_rate = (risk / total) * 100
 
     # ===============================
-    # Metrics
+    # Metrics Cardio
     # ===============================
     c1, c2, c3 = st.columns(3)
     c1.metric("Total Pasien", total)
@@ -45,7 +45,7 @@ def chart():
     # ===============================
     # Gender Distribution (Pie)
     # ===============================
-    st.subheader("Distribusi Gender")
+    st.subheader("Distribusi Gender Pasien")
 
     gender_count = cardio["gender"].value_counts().reset_index()
     gender_count.columns = ["Gender", "Jumlah"]
@@ -74,7 +74,55 @@ def chart():
     st.divider()
 
     # ===============================
-    # Air Quality Preview
+    # WATER POTABILITY SECTION
     # ===============================
-    st.subheader("Preview Dataset Air Quality")
-    st.dataframe(air.head(), use_container_width=True)
+    st.header("Analisis Kualitas Air (Water Potability)")
+
+    # ===============================
+    # Preview Dataset Water
+    # ===============================
+    st.subheader("Preview Dataset Water Potability")
+    st.dataframe(water.head(), use_container_width=True)
+
+    # ===============================
+    # Distribusi Potability
+    # ===============================
+    st.subheader("Distribusi Kelayakan Air Minum")
+
+    pot_count = water["Potability"].value_counts().reset_index()
+    pot_count.columns = ["Potability", "Jumlah"]
+
+    pot_chart = alt.Chart(pot_count).mark_bar().encode(
+        x=alt.X("Potability:N", title="Potability (0 = Tidak Layak, 1 = Layak)"),
+        y=alt.Y("Jumlah:Q"),
+        tooltip=["Potability", "Jumlah"],
+        color="Potability:N"
+    ).properties(title="Distribusi Air Layak Minum")
+
+    st.altair_chart(pot_chart, use_container_width=True)
+
+    # ===============================
+    # Parameter Air vs Potability
+    # ===============================
+    st.subheader("Parameter Kualitas Air vs Potability")
+
+    parameter = st.selectbox(
+        "Pilih Parameter Air",
+        [
+            "ph", "Hardness", "Solids", "Chloramines",
+            "Sulfate", "Conductivity", "Organic_carbon",
+            "Trihalomethanes", "Turbidity"
+        ]
+    )
+
+    box_water = alt.Chart(
+        water.dropna()
+    ).mark_boxplot().encode(
+        x=alt.X("Potability:N", title="Potability"),
+        y=alt.Y(f"{parameter}:Q", title=parameter),
+        color="Potability:N"
+    ).properties(
+        title=f"{parameter} terhadap Kelayakan Air"
+    )
+
+    st.altair_chart(box_water, use_container_width=True)
