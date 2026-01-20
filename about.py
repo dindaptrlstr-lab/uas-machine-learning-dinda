@@ -10,10 +10,10 @@ def about_dataset():
     # Kolom Gambar
     # ===============================
     with col1:
-        img_url = "https://upload.wikimedia.org/wikipedia/commons/8/82/Air_pollution.jpg"
+        img_url = "https://upload.wikimedia.org/wikipedia/commons/3/3e/Drinking_water.jpg"
         st.image(
             img_url,
-            caption="Health & Environmental Dataset",
+            caption="Health & Water Quality Dataset",
             use_container_width=True
         )
 
@@ -23,22 +23,24 @@ def about_dataset():
     with col2:
         st.write(
             "Dataset yang digunakan dalam penelitian ini terdiri dari dua sumber utama, "
-            "yaitu **Cardiovascular Disease Dataset** dan **UCI Air Quality Dataset**. "
+            "yaitu **Cardiovascular Disease Dataset** dan **Water Potability Dataset**. "
             "Kedua dataset ini digunakan untuk menganalisis hubungan antara kondisi kesehatan "
-            "kardiovaskular dan kualitas lingkungan udara.\n\n"
+            "kardiovaskular dan kualitas lingkungan air.\n\n"
 
             "**Cardiovascular Disease Dataset** berisi data pasien yang mencakup usia, "
             "jenis kelamin, tekanan darah, kadar kolesterol, kebiasaan merokok, "
             "serta indikator medis lainnya yang digunakan untuk memprediksi risiko "
             "penyakit kardiovaskular.\n\n"
 
-            "**UCI Air Quality Dataset** berisi data pengukuran kualitas udara seperti "
-            "konsentrasi CO, NO2, NOx, dan C6H6, serta variabel lingkungan lainnya yang "
-            "direkam secara berkala. Dataset ini merepresentasikan kondisi lingkungan "
-            "yang berpotensi memengaruhi kesehatan manusia.\n\n"
+            "**Water Potability Dataset** berisi data kualitas air yang mencakup "
+            "parameter fisik dan kimia seperti **pH, Hardness, Total Dissolved Solids, "
+            "Chloramines, Sulfate, Conductivity, Organic Carbon, Trihalomethanes, "
+            "dan Turbidity**, dengan variabel target **Potability** yang menunjukkan "
+            "kelayakan air untuk dikonsumsi.\n\n"
 
             "Kombinasi kedua dataset ini memungkinkan analisis prediktif menggunakan "
             "metode *Machine Learning* seperti **Logistic Regression, Decision Tree, "
-            "Random Forest, SVM, dan CatBoost** untuk memahami pola dan faktor risiko "
-            "penyakit kardiovaskular berdasarkan data kesehatan dan lingkungan."
+            "Random Forest, SVM, dan CatBoost** untuk memahami pengaruh faktor kesehatan "
+            "dan lingkungan terhadap risiko penyakit kardiovaskular serta kualitas "
+            "hidup masyarakat."
         )
