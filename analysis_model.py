@@ -1,27 +1,37 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from scipy.stats import norm
-
+from scipy.special import expit  # sigmoid
 
 def analysis_model_page():
 
     # =========================
     # PENGAMAN DATASET
     # =========================
-    if "df" not in st.session_state:
+    if "df" not in st.session_state or "dataset_name" not in st.session_state:
         st.warning("Silakan upload dataset terlebih dahulu.")
         return
 
     df = st.session_state["df"]
-    dataset_type = st.session_state.get("dataset_type")
+    dataset_name = st.session_state["dataset_name"]
 
-    target_col = "RiskLevel" if dataset_type == "Kesehatan" else "Occupancy"
+    # =========================
+    # TARGET OTOMATIS
+    # =========================
+    if dataset_name == "water_potability.csv":
+        target_col = "Potability"
+        dataset_type = "Lingkungan"
+    elif dataset_name == "cardio_train.csv":
+        target_col = "cardio"
+        dataset_type = "Kesehatan"
+    else:
+        st.error("Dataset tidak dikenali.")
+        return
 
     st.title("🧠 Analisis Model Klasifikasi (Detail Perhitungan)")
     st.write(
-        "Menu ini menampilkan **langkah-langkah lengkap setiap algoritma klasifikasi** "
-        "beserta **output numerik dari setiap tahap perhitungan**, menggunakan contoh data nyata."
+        f"Dataset: **{dataset_name}**  \n"
+        "Halaman ini menampilkan **logika dan perhitungan inti** dari setiap algoritma klasifikasi."
     )
 
     st.markdown("---")
@@ -29,118 +39,38 @@ def analysis_model_page():
     algo = st.selectbox(
         "Pilih Algoritma",
         [
-            "K-Nearest Neighbor (KNN)",
             "Logistic Regression",
-            "Naive Bayes",
             "Decision Tree",
-            "Random Forest"
+            "Random Forest",
+            "Support Vector Machine (SVM)",
+            "CatBoost"
         ]
     )
 
     st.markdown("---")
 
-    # =========================================================
-    # KNN
-    # =========================================================
-    if algo == "K-Nearest Neighbor (KNN)":
-        st.subheader("📌 K-Nearest Neighbor (KNN)")
-
-        numeric_df = df.select_dtypes(include="number").drop(columns=[target_col], errors="ignore")
-
-        data_uji = numeric_df.iloc[0]
-        data_latih = numeric_df.iloc[1:6]
-
-        distances = np.sqrt(((data_latih - data_uji) ** 2).sum(axis=1))
-        result_df = data_latih.copy()
-        result_df["Jarak_Euclidean"] = distances
-        result_df = result_df.sort_values("Jarak_Euclidean")
-
-        st.write("**Data Uji (X):**")
-        st.dataframe(data_uji.to_frame("Nilai"))
-
-        st.write("**Hasil Jarak Euclidean:**")
-        st.dataframe(result_df)
-
-        K = 3
-        neighbors = result_df.head(K)
-        neighbor_labels = df.loc[neighbors.index, target_col]
-
-        voting_df = neighbors[["Jarak_Euclidean"]].copy()
-        voting_df["Label_Target"] = neighbor_labels.values
-
-        st.write(f"**{K} Tetangga Terdekat:**")
-        st.dataframe(voting_df)
-
-        vote = neighbor_labels.value_counts()
-        st.write("**Hasil Voting:**")
-        st.dataframe(vote.to_frame("Jumlah"))
-
-        st.success(f"Hasil Klasifikasi KNN: **{vote.idxmax()}**")
+    numeric_df = df.select_dtypes(include="number").drop(columns=[target_col], errors="ignore")
+    X_sample = numeric_df.iloc[0].values
 
     # =========================================================
     # LOGISTIC REGRESSION
     # =========================================================
-    elif algo == "Logistic Regression":
+    if algo == "Logistic Regression":
         st.subheader("📌 Logistic Regression")
 
-        numeric_df = df.select_dtypes(include="number").drop(columns=[target_col], errors="ignore")
-
-        x = numeric_df.iloc[0].values
-        beta = np.ones(len(x)) * 0.1
+        beta = np.ones(len(X_sample)) * 0.1
         beta_0 = 0.1
 
-        z = beta_0 + np.dot(x, beta)
-        sigmoid = 1 / (1 + np.exp(-z))
-        threshold = 0.5
-        kelas = 1 if sigmoid >= threshold else 0
+        z = beta_0 + np.dot(X_sample, beta)
+        prob = expit(z)
+        kelas = 1 if prob >= 0.5 else 0
+        log_loss = -(np.log(prob) if kelas == 1 else np.log(1 - prob))
 
-        log_loss = -(np.log(sigmoid) if kelas == 1 else np.log(1 - sigmoid))
-
-        st.write("**Bobot (β):**")
-        st.write(beta)
-
-        st.write(f"**Nilai z = β₀ + β·x:** `{z:.4f}`")
-        st.write(f"**Sigmoid(z) / Probabilitas:** `{sigmoid:.4f}`")
-        st.write(f"**Threshold:** `{threshold}`")
-        st.write(f"**Hasil Klasifikasi:** `{kelas}`")
-        st.write(f"**Log Loss (1 data):** `{log_loss:.4f}`")
-
-    # =========================================================
-    # NAIVE BAYES
-    # =========================================================
-    elif algo == "Naive Bayes":
-        st.subheader("📌 Naive Bayes")
-
-        numeric_df = df.select_dtypes(include="number").drop(columns=[target_col], errors="ignore")
-        x = numeric_df.iloc[0]
-
-        st.write("**Data Uji:**")
-        st.dataframe(x.to_frame("Nilai"))
-
-        results = {}
-
-        for cls in df[target_col].unique():
-            subset = df[df[target_col] == cls]
-            prior = len(subset) / len(df)
-
-            likelihoods = []
-            for col in numeric_df.columns:
-                mean = subset[col].mean()
-                std = subset[col].std() if subset[col].std() > 0 else 1e-6
-                prob = norm.pdf(x[col], mean, std)
-                likelihoods.append(prob)
-
-            posterior = prior * np.prod(likelihoods)
-            results[cls] = posterior
-
-        result_df = pd.DataFrame.from_dict(
-            results, orient="index", columns=["Posterior Score"]
-        )
-
-        st.write("**Posterior Probability (Unnormalized):**")
-        st.dataframe(result_df)
-
-        st.success(f"Hasil Klasifikasi Naive Bayes: **{result_df.idxmax()[0]}**")
+        st.write("**Rumus:**  z = β₀ + β·x")
+        st.write(f"z = `{z:.4f}`")
+        st.write(f"Sigmoid(z) = `{prob:.4f}`")
+        st.write(f"Prediksi Kelas = `{kelas}`")
+        st.write(f"Log Loss (1 data) = `{log_loss:.4f}`")
 
     # =========================================================
     # DECISION TREE
@@ -148,35 +78,29 @@ def analysis_model_page():
     elif algo == "Decision Tree":
         st.subheader("📌 Decision Tree")
 
-        class_counts = df[target_col].value_counts(normalize=True)
-        entropy = -(class_counts * np.log2(class_counts)).sum()
+        class_prob = df[target_col].value_counts(normalize=True)
+        entropy = -(class_prob * np.log2(class_prob)).sum()
 
-        st.write("**Distribusi Kelas:**")
-        st.dataframe(class_counts.to_frame("Proporsi"))
+        st.write("**Entropy Awal Dataset:**")
+        st.write(f"`{entropy:.4f}`")
 
-        st.write(f"**Entropy Dataset:** `{entropy:.4f}`")
+        feature = numeric_df.columns[0]
+        threshold = df[feature].median()
 
-        feature = df.select_dtypes(include="number").drop(columns=[target_col], errors="ignore").columns[0]
+        left = df[df[feature] <= threshold]
+        right = df[df[feature] > threshold]
 
-        median = df[feature].median()
-        left = df[df[feature] <= median]
-        right = df[df[feature] > median]
-
-        def entropy_subset(sub):
-            probs = sub[target_col].value_counts(normalize=True)
-            return -(probs * np.log2(probs)).sum()
-
-        entropy_left = entropy_subset(left)
-        entropy_right = entropy_subset(right)
+        def entropy_sub(data):
+            p = data[target_col].value_counts(normalize=True)
+            return -(p * np.log2(p)).sum()
 
         ig = entropy - (
-            (len(left)/len(df)) * entropy_left +
-            (len(right)/len(df)) * entropy_right
+            (len(left)/len(df)) * entropy_sub(left) +
+            (len(right)/len(df)) * entropy_sub(right)
         )
 
         st.write(f"**Fitur Contoh:** `{feature}`")
-        st.write(f"Entropy Kiri: `{entropy_left:.4f}`")
-        st.write(f"Entropy Kanan: `{entropy_right:.4f}`")
+        st.write(f"**Threshold (Median):** `{threshold:.4f}`")
         st.success(f"**Information Gain:** `{ig:.4f}`")
 
     # =========================================================
@@ -185,26 +109,63 @@ def analysis_model_page():
     elif algo == "Random Forest":
         st.subheader("📌 Random Forest")
 
-        n_samples = len(df)
-        bootstrap_idx = np.random.choice(df.index, size=n_samples, replace=True)
+        n = len(df)
+        bootstrap_idx = np.random.choice(df.index, size=n, replace=True)
 
-        st.write(f"**Jumlah Data Bootstrap:** `{len(bootstrap_idx)}`")
-        st.write("**Contoh Index Bootstrap (10 pertama):**")
-        st.write(bootstrap_idx[:10])
+        st.write("**Bootstrap Sampling:**")
+        st.write("10 indeks pertama:", bootstrap_idx[:10])
 
-        fake_tree_preds = np.random.choice(df[target_col].unique(), size=5)
-        vote = pd.Series(fake_tree_preds).value_counts()
+        fake_tree_pred = np.random.choice(df[target_col].unique(), size=7)
+        vote = pd.Series(fake_tree_pred).value_counts()
 
         st.write("**Prediksi Tiap Tree:**")
-        st.write(fake_tree_preds)
+        st.write(fake_tree_pred)
 
-        st.write("**Hasil Voting:**")
-        st.dataframe(vote.to_frame("Jumlah"))
+        st.success(f"Hasil Voting Mayoritas: **{vote.idxmax()}**")
 
-        st.success(f"Hasil Akhir Random Forest: **{vote.idxmax()}**")
+    # =========================================================
+    # SVM
+    # =========================================================
+    elif algo == "Support Vector Machine (SVM)":
+        st.subheader("📌 Support Vector Machine (SVM)")
+
+        w = np.ones(len(X_sample)) * 0.5
+        b = -0.2
+
+        decision_value = np.dot(w, X_sample) + b
+        kelas = 1 if decision_value >= 0 else 0
+
+        st.write("**Decision Function:**  f(x) = w·x + b")
+        st.write(f"f(x) = `{decision_value:.4f}`")
+        st.success(f"Hasil Klasifikasi: **{kelas}**")
+
+    # =========================================================
+    # CATBOOST
+    # =========================================================
+    elif algo == "CatBoost":
+        st.subheader("📌 CatBoost")
+
+        st.write("""
+        CatBoost adalah **ensemble Gradient Boosting**
+        yang membangun pohon keputusan secara bertahap
+        untuk memperbaiki error sebelumnya.
+        """)
+
+        initial_pred = 0.5
+        learning_rate = 0.1
+        correction = -0.2
+
+        new_pred = initial_pred + learning_rate * correction
+
+        st.write(f"Prediksi Awal: `{initial_pred}`")
+        st.write(f"Koreksi Error: `{correction}`")
+        st.write(f"Prediksi Baru: `{new_pred:.4f}`")
+
+        st.success("Prediksi diperbarui menggunakan boosting")
 
     st.markdown("---")
     st.info(
-        "Semua perhitungan di atas menggunakan contoh data nyata dari dataset. "
-        "Proses training dan evaluasi performa model dilakukan pada menu **Machine Learning**."
+        "Perhitungan di atas bertujuan **edukatif** untuk memahami "
+        "mekanisme internal algoritma. Training dan evaluasi model "
+        "dilakukan pada menu **Machine Learning**."
     )
