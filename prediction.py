@@ -6,20 +6,20 @@ import joblib
 
 
 def prediction_app():
-    st.header("Prediksi Risiko Penyakit Kardiovaskular")
+    st.header("Prediksi Kelayakan Air Minum")
     st.write(
-        "Masukkan data pasien untuk memprediksi risiko "
-        "**penyakit kardiovaskular** menggunakan "
+        "Masukkan parameter kualitas air untuk memprediksi "
+        "**kelayakan air minum (Potability)** menggunakan "
         "**model Machine Learning terbaik**."
     )
 
     st.divider()
 
     # ===============================
-    # 1. Load Model & Metadata (SAFE)
+    # 1. Load Model & Metadata
     # ===============================
     try:
-        model = joblib.load("best_model_cardio.pkl")
+        model = joblib.load("best_model_water.pkl")
         feature_names = joblib.load("model_features.pkl")
         numeric_cols = joblib.load("numeric_columns.pkl")
     except Exception:
@@ -27,100 +27,86 @@ def prediction_app():
         st.stop()
 
     # ===============================
-    # 2. Input Data Pasien
+    # 2. Input Parameter Air
     # ===============================
-    st.subheader("Input Data Pasien")
-
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        age = st.number_input("Age (hari)", min_value=0, max_value=40000, value=18000)
-    with col2:
-        gender = st.selectbox("Gender", ["Male", "Female"])
-    with col3:
-        height = st.number_input("Height (cm)", min_value=100, max_value=220, value=165)
-    with col4:
-        weight = st.number_input("Weight (kg)", min_value=30, max_value=200, value=65)
-
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        ap_hi = st.number_input("Systolic BP", min_value=80, max_value=250, value=120)
-    with col2:
-        ap_lo = st.number_input("Diastolic BP", min_value=50, max_value=150, value=80)
-    with col3:
-        cholesterol = st.selectbox("Cholesterol", [1, 2, 3])
-    with col4:
-        gluc = st.selectbox("Glucose", [1, 2, 3])
+    st.subheader("Input Parameter Kualitas Air")
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        smoke = st.selectbox("Smoking", [0, 1])
+        ph = st.number_input("pH", min_value=0.0, max_value=14.0, value=7.0)
     with col2:
-        alco = st.selectbox("Alcohol Intake", [0, 1])
+        hardness = st.number_input("Hardness", min_value=0.0, value=200.0)
     with col3:
-        active = st.selectbox("Physical Activity", [0, 1])
+        solids = st.number_input("Total Dissolved Solids", min_value=0.0, value=20000.0)
+
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        chloramines = st.number_input("Chloramines", min_value=0.0, value=7.0)
+    with col2:
+        sulfate = st.number_input("Sulfate", min_value=0.0, value=300.0)
+    with col3:
+        conductivity = st.number_input("Conductivity", min_value=0.0, value=400.0)
+
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        organic_carbon = st.number_input("Organic Carbon", min_value=0.0, value=10.0)
+    with col2:
+        trihalomethanes = st.number_input("Trihalomethanes", min_value=0.0, value=60.0)
+    with col3:
+        turbidity = st.number_input("Turbidity", min_value=0.0, value=4.0)
 
     # ===============================
-    # 3. Feature Engineering
+    # 3. DataFrame Input
     # ===============================
-    bmi = weight / ((height / 100) ** 2)
-    st.info(f"BMI Pasien: **{bmi:.2f}**")
-
     user_df = pd.DataFrame({
-        "age": [age],
-        "gender": [1 if gender == "Male" else 2],
-        "height": [height],
-        "weight": [weight],
-        "ap_hi": [ap_hi],
-        "ap_lo": [ap_lo],
-        "cholesterol": [cholesterol],
-        "gluc": [gluc],
-        "smoke": [smoke],
-        "alco": [alco],
-        "active": [active],
-        "bmi": [bmi]
+        "ph": [ph],
+        "Hardness": [hardness],
+        "Solids": [solids],
+        "Chloramines": [chloramines],
+        "Sulfate": [sulfate],
+        "Conductivity": [conductivity],
+        "Organic_carbon": [organic_carbon],
+        "Trihalomethanes": [trihalomethanes],
+        "Turbidity": [turbidity]
     })
 
     # ===============================
-    # 4. Encoding (SAFE)
+    # 4. Sinkronisasi Fitur
     # ===============================
-    user_processed = pd.get_dummies(user_df, drop_first=True)
-
     for col in feature_names:
-        if col not in user_processed.columns:
-            user_processed[col] = 0
+        if col not in user_df.columns:
+            user_df[col] = 0
 
-    user_processed = user_processed[feature_names]
+    user_df = user_df[feature_names]
 
     # ===============================
-    # 5. Normalisasi (KONSISTEN)
+    # 5. Normalisasi
     # ===============================
     scaler = MinMaxScaler()
-    user_processed[numeric_cols] = scaler.fit_transform(
-        user_processed[numeric_cols]
-    )
+    user_df[numeric_cols] = scaler.fit_transform(user_df[numeric_cols])
 
     # ===============================
     # 6. Prediction
     # ===============================
-    if st.button("Prediksi Risiko"):
-        prob = model.predict_proba(user_processed)[0][1]
-        pred = model.predict(user_processed)[0]
+    if st.button("Prediksi Kelayakan"):
+        prob = model.predict_proba(user_df)[0][1]
+        pred = model.predict(user_df)[0]
 
         st.subheader("Hasil Prediksi")
-        st.metric("Probabilitas Risiko", f"{prob * 100:.2f}%")
+        st.metric("Probabilitas Air Layak Minum", f"{prob * 100:.2f}%")
 
         if pred == 1:
-            st.error("⚠️ Pasien **BERISIKO** penyakit kardiovaskular")
+            st.success("✅ Air **LAYAK DIKONSUMSI**")
         else:
-            st.success("✅ Pasien **TIDAK BERISIKO TINGGI** penyakit kardiovaskular")
+            st.error("⚠️ Air **TIDAK LAYAK DIKONSUMSI**")
 
         st.divider()
 
         st.markdown("### Interpretasi")
         st.markdown("""
-        - Probabilitas tinggi menunjukkan potensi risiko kardiovaskular
-        - Model digunakan sebagai **alat skrining awal**
-        - Keputusan medis tetap harus melibatkan **tenaga kesehatan**
+        - Probabilitas tinggi menunjukkan air cenderung **layak minum**
+        - Model digunakan sebagai **alat bantu analisis awal**
+        - Keputusan akhir tetap memerlukan **uji laboratorium resmi**
         """)
 
 
