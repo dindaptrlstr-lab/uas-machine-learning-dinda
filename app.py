@@ -86,4 +86,3 @@ with tabs[5]:
 with tabs[6]:
     contact_page()
 
-
