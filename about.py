@@ -136,4 +136,3 @@ def show_about():
         "- Hasil evaluasi model ditampilkan pada menu Machine Learning."
     )
 
-
