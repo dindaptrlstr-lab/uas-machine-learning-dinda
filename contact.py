@@ -13,4 +13,3 @@ def contact_page():
     🔗 GitHub: https://github.com/dindaptrlstr-lab
     """)
 
-
