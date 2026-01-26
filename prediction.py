@@ -119,4 +119,3 @@ def prediction_page():
         "- Hasil prediksi digunakan untuk **analisis dan pembelajaran**.\n"
         "- Model tidak dimaksudkan sebagai alat diagnosis medis."
     )
-
