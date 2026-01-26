@@ -73,10 +73,10 @@ Seluruh dependensi proyek telah tercantum dalam file `requirements.txt`.
 Untuk menjalankan aplikasi secara lokal, ikuti langkah-langkah berikut:
 
 1. Clone repository:
-   git clone https://github.com/dindaptrlstr-lab/learning.git
+   git clone https://github.com/dindaptrlstr-lab/uas-machine-learning-dinda.git
 
 2. Masuk ke direktori proyek:
-   cd learning
+   cd uas-machine-learning-dinda
 
 3. Install dependensi:
    pip install -r requirements.txt
