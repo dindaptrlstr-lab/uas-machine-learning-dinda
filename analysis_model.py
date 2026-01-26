@@ -231,4 +231,3 @@ def analysis_model_page():
         "dilakukan pada menu **Machine Learning**."
     )
 
-
