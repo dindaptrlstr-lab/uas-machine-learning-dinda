@@ -7,12 +7,17 @@ def prediction_page():
     st.subheader("Aplikasi Prediksi Kelayakan Air Minum dan Risiko Penyakit Jantung")
 
     # =========================
+    # AMBIL NAMA MODEL TERBAIK
+    # =========================
+    nama_model = st.session_state.get("best_model_name", "model terpilih")
+
+    # =========================
     # DESKRIPSI HALAMAN
     # =========================
-    st.markdown("""
+    st.markdown(f"""
     Halaman ini digunakan untuk melakukan **prediksi pada data baru**
-    menggunakan **model terbaik** yang diperoleh dari proses pelatihan
-    pada menu **Pemodelan Machine Learning**.
+    menggunakan **model {nama_model}** yang memiliki kinerja terbaik
+    berdasarkan hasil evaluasi pada tahap pemodelan.
 
     Data yang dimasukkan bersifat **manual** dan tidak berasal dari dataset pelatihan,
     sehingga merepresentasikan proses **inferensi model**.
@@ -42,36 +47,36 @@ def prediction_page():
     feature_columns = st.session_state["feature_columns"]
     scaler = st.session_state.get("scaler")
 
+    # Hilangkan kolom ID jika ada
     feature_columns = [f for f in feature_columns if f.lower() != "id"]
 
     # =========================
-    # LABEL HASIL
+    # PENENTUAN TIPE & LABEL
     # =========================
-    if dataset_name == "cardio_train.csv":
-        label_positif = "Berisiko Penyakit Jantung"
-        label_negatif = "Tidak Berisiko Penyakit Jantung"
-        tipe_data = "kesehatan"
-    elif dataset_name == "water_potability.csv":
+    if dataset_name == "water_potability.csv":
+        tipe_data = "air"
         label_positif = "Air Layak Minum"
         label_negatif = "Air Tidak Layak Minum"
-        tipe_data = "air"
+    elif dataset_name == "cardio_train.csv":
+        tipe_data = "kesehatan"
+        label_positif = "Berisiko Penyakit Jantung"
+        label_negatif = "Tidak Berisiko Penyakit Jantung"
     else:
         st.error("Dataset tidak dikenali.")
         return
 
     # =========================
-    # INPUT DATA
+    # FORM INPUT DATA
     # =========================
     st.markdown("---")
     st.subheader("Input Data")
-    st.write("Silakan masukkan nilai fitur berikut untuk melakukan prediksi.")
+    st.write("Silakan masukkan nilai parameter berikut untuk melakukan prediksi.")
 
     data_input = {}
     cols = st.columns(3)
 
     for i, kolom in enumerate(feature_columns):
-        col = cols[i % 3]
-        with col:
+        with cols[i % 3]:
             nilai_awal = float(df[kolom].mean())
             data_input[kolom] = st.number_input(
                 label=kolom,
@@ -80,9 +85,11 @@ def prediction_page():
             )
 
     # =========================
-    # PRA-PEMROSESAN
+    # PRA-PEMROSESAN DATA INPUT
     # =========================
     input_df = pd.DataFrame([data_input])
+
+    # WAJIB: samakan urutan kolom dengan training
     input_df = input_df[feature_columns]
 
     if scaler is not None:
@@ -91,64 +98,56 @@ def prediction_page():
         input_diproses = input_df.values
 
     # =========================
-    # PREDIKSI + REKOMENDASI
+    # PROSES PREDIKSI + REKOMENDASI
     # =========================
     st.markdown("---")
     if st.button("🔍 Jalankan Prediksi"):
 
-        hasil_prediksi = model.predict(input_diproses)[0]
+        hasil = model.predict(input_diproses)[0]
 
         st.subheader("Hasil Prediksi")
 
-        # =====================
-        # HASIL + REKOMENDASI AIR
-        # =====================
+        # ===== DATASET AIR =====
         if tipe_data == "air":
-            if hasil_prediksi == 1:
+            if hasil == 1:
                 st.success("✅ **Air Layak Minum**")
-
-                st.markdown("### ✅ Rekomendasi")
+                st.markdown("### Rekomendasi")
                 st.markdown("""
                 Berdasarkan hasil prediksi, kualitas air **layak untuk dikonsumsi**.
 
                 **Saran:**
                 - Air dapat digunakan untuk kebutuhan sehari-hari
-                - Tetap lakukan pengecekan kualitas air secara berkala
+                - Lakukan pengecekan kualitas air secara berkala
                 - Simpan air di wadah yang bersih dan tertutup
                 """)
             else:
                 st.error("❌ **Air Tidak Layak Minum**")
-
                 st.markdown("### ⚠️ Rekomendasi")
                 st.markdown("""
                 Berdasarkan hasil prediksi, air **tidak layak untuk dikonsumsi langsung**.
 
                 **Saran:**
-                - Lakukan penyaringan atau perebusan sebelum digunakan
-                - Gunakan alat filtrasi air (filter / RO)
+                - Lakukan perebusan atau penyaringan air
+                - Gunakan alat filtrasi air
                 - Hindari konsumsi langsung tanpa pengolahan
                 """)
 
-        # =====================
-        # HASIL + REKOMENDASI KESEHATAN
-        # =====================
+        # ===== DATASET KESEHATAN =====
         if tipe_data == "kesehatan":
-            if hasil_prediksi == 1:
+            if hasil == 1:
                 st.error("⚠️ **Berisiko Penyakit Jantung**")
-
                 st.markdown("### ⚠️ Rekomendasi")
                 st.markdown("""
                 Berdasarkan hasil prediksi, terdapat **risiko penyakit jantung**.
 
                 **Saran:**
-                - Lakukan pemeriksaan kesehatan secara berkala
-                - Jaga pola makan sehat dan rendah lemak
+                - Lakukan pemeriksaan kesehatan secara rutin
+                - Terapkan pola makan sehat
                 - Tingkatkan aktivitas fisik
-                - Konsultasi dengan tenaga medis
+                - Konsultasikan dengan tenaga medis
                 """)
             else:
                 st.success("✅ **Tidak Berisiko Penyakit Jantung**")
-
                 st.markdown("### ✅ Rekomendasi")
                 st.markdown("""
                 Berdasarkan hasil prediksi, risiko penyakit jantung **tergolong rendah**.
@@ -156,7 +155,7 @@ def prediction_page():
                 **Saran:**
                 - Pertahankan pola hidup sehat
                 - Tetap aktif berolahraga
-                - Lakukan pemeriksaan kesehatan rutin
+                - Lakukan pemeriksaan kesehatan berkala
                 """)
 
     # =========================
