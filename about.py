@@ -7,24 +7,24 @@ def show_about():
     # PENGAMAN (SESSION STATE)
     # =========================
     if "df" not in st.session_state:
-        st.warning("Silakan unggah dan pilih dataset terlebih dahulu pada menu Unggah Data.")
+        st.warning("Silakan pilih dataset terlebih dahulu pada menu Upload Data.")
         return
 
     df = st.session_state["df"]
     dataset_name = st.session_state.get("dataset_name", "Tidak diketahui")
 
     # =========================
-    # DESKRIPSI UMUM DATASET
+    # DESKRIPSI DATASET
     # =========================
     st.subheader("Informasi Umum Dataset")
 
     if dataset_name == "water_potability.csv":
         st.markdown("""
-        **Dataset Kelayakan Air Minum (Water Potability Dataset)** digunakan untuk
+        **Water Potability Dataset** digunakan untuk
         melakukan **klasifikasi kelayakan air minum**
-        berdasarkan parameter kualitas air secara fisik dan kimia.
+        berdasarkan parameter kualitas air fisik dan kimia.
 
-        **Fitur yang digunakan:**
+        **Fitur utama yang digunakan:**
         - pH  
         - Hardness  
         - Solids  
@@ -35,24 +35,25 @@ def show_about():
         - Trihalomethanes  
         - Turbidity  
 
-        **Variabel Target:**
+        **Target Variabel:**
         - `Potability`  
           - 0 → Air tidak layak konsumsi  
           - 1 → Air layak konsumsi  
 
         **Jenis Permasalahan:**
         - Supervised Learning  
-        - Klasifikasi Biner
+        - Binary Classification
         """)
+
         dataset_type = "Lingkungan"
 
     elif dataset_name == "cardio_train.csv":
         st.markdown("""
-        **Dataset Penyakit Kardiovaskular (Cardiovascular Disease Dataset)** digunakan untuk
+        **Cardiovascular Disease Dataset** digunakan untuk
         memprediksi **risiko penyakit kardiovaskular**
         berdasarkan data klinis dan gaya hidup pasien.
 
-        **Fitur yang digunakan:**
+        **Fitur utama yang digunakan:**
         - Usia  
         - Jenis Kelamin  
         - Tekanan Darah  
@@ -62,23 +63,24 @@ def show_about():
         - Kebiasaan Merokok  
         - Aktivitas Fisik  
 
-        **Variabel Target:**
+        **Target Variabel:**
         - `cardio`  
           - 0 → Tidak berisiko  
           - 1 → Berisiko  
 
         **Jenis Permasalahan:**
         - Supervised Learning  
-        - Klasifikasi Biner
+        - Binary Classification
         """)
+
         dataset_type = "Kesehatan"
 
     else:
         st.markdown("""
         Dataset diunggah oleh pengguna.
 
-        Informasi mengenai variabel target dan jenis permasalahan
-        akan ditentukan pada tahap **Pemodelan Machine Learning**.
+        Informasi target dan tipe permasalahan
+        akan ditentukan pada tahap **Machine Learning**.
         """)
         dataset_type = "Tidak diketahui"
 
@@ -90,12 +92,12 @@ def show_about():
     col1, col2, col3 = st.columns(3)
     col1.metric("Jumlah Data", df.shape[0])
     col2.metric("Jumlah Fitur", df.shape[1])
-    col3.metric("Kategori Dataset", dataset_type)
+    col3.metric("Jenis Dataset", dataset_type)
 
     # =========================
-    # PRATINJAU DATA
+    # CONTOH DATA
     # =========================
-    st.subheader("Pratinjau Data")
+    st.subheader("Preview Data")
     st.dataframe(df.head(), use_container_width=True)
 
     # =========================
@@ -107,29 +109,31 @@ def show_about():
     Aplikasi ini menerapkan beberapa algoritma
     **Machine Learning untuk klasifikasi**, yaitu:
 
-    - Logistic Regression  
-    - Decision Tree Classifier  
-    - Random Forest Classifier  
-    - Support Vector Machine (SVM)  
-    - CatBoost Classifier  
+    - **Logistic Regression**  
+    - **Decision Tree Classifier**  
+    - **Random Forest Classifier**  
+    - **Support Vector Machine (SVM)**  
+    - **CatBoost Classifier**
 
     Model-model tersebut digunakan untuk
-    **membandingkan kinerja prediksi**
+    **membandingkan performa prediksi**
     menggunakan metrik evaluasi berikut:
-    - Akurasi (Accuracy)  
-    - Presisi (Precision)  
+    - Accuracy  
+    - Precision  
     - Recall  
     - F1-Score  
     - ROC-AUC
     """)
 
     # =========================
-    # CATATAN PRA-PROSES DATA
+    # CATATAN PREPROCESSING
     # =========================
     st.info(
         "Catatan:\n"
-        "- Dataset akan melalui tahap pra-pemrosesan sebelum dilakukan pemodelan.\n"
-        "- Pra-pemrosesan meliputi penanganan nilai hilang dan standarisasi fitur.\n"
-        "- Variabel target dapat ditentukan secara otomatis atau pada menu Machine Learning.\n"
+        "- Dataset akan melalui tahap preprocessing sebelum pemodelan.\n"
+        "- Preprocessing meliputi penanganan missing value dan standarisasi fitur.\n"
+        "- Target variabel ditentukan secara otomatis atau pada menu Machine Learning.\n"
         "- Hasil evaluasi model ditampilkan pada menu Machine Learning."
     )
+
+
