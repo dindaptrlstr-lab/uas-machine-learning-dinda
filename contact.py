@@ -1,15 +1,14 @@
-import streamlit as st 
+import streamlit as st
 
 def contact_page():
-    st.subheader("📞 Contact")
+    st.subheader("📞 Kontak")
 
     st.write("""
-    **Nama Mahasiswa:Dinda Putri Lestari**  
-    **Program Studi: S1 Sains Data**  
-    **Universitas:Universitas Muhammadiyah Semarang**
+    **Nama Mahasiswa:** Dinda Putri Lestari  
+    **Program Studi:** S1 Sains Data  
+    **Universitas:** Universitas Muhammadiyah Semarang  
 
-    📧 Email: dindaptrlstr@gmail.com 
+    📧 **Email:** dindaptrlstr@gmail.com  
     
-    🔗 GitHub: https://github.com/dindaptrlstr-lab
+    🔗 **GitHub:** https://github.com/dindaptrlstr-lab
     """)
-
