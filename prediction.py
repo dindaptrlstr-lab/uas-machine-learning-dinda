@@ -23,27 +23,24 @@ def prediction_page():
     # =========================
     if "best_model" not in st.session_state:
         st.warning(
-            "Silakan jalankan proses **Pemodelan Machine Learning** "
-            "terlebih dahulu."
+            "Silakan jalankan proses **Pemodelan Machine Learning** terlebih dahulu."
         )
         return
 
     if "df" not in st.session_state or "dataset_name" not in st.session_state:
         st.warning(
-            "Silakan unggah dataset terlebih dahulu "
-            "melalui menu Pemilihan Dataset."
+            "Silakan unggah dataset terlebih dahulu melalui menu Pemilihan Dataset."
         )
         return
 
     if "feature_columns" not in st.session_state:
         st.warning(
-            "Informasi fitur tidak tersedia. "
-            "Silakan lakukan pelatihan ulang model."
+            "Informasi fitur tidak tersedia. Silakan lakukan pelatihan ulang model."
         )
         return
 
     # =========================
-    # AMBIL OBJEK DARI SESSION
+    # AMBIL OBJEK SESSION
     # =========================
     model = st.session_state["best_model"]
     df = st.session_state["df"]
@@ -55,7 +52,7 @@ def prediction_page():
     feature_columns = [f for f in feature_columns if f.lower() != "id"]
 
     # =========================
-    # PENENTUAN LABEL HASIL
+    # LABEL HASIL PREDIKSI
     # =========================
     if dataset_name == "cardio_train.csv":
         label_positif = "Berisiko Penyakit Jantung"
@@ -67,13 +64,13 @@ def prediction_page():
         st.error("Dataset tidak dikenali oleh sistem.")
         return
 
+    # =========================
+    # FORM INPUT DATA
+    # =========================
     st.markdown("---")
     st.subheader("Input Data")
-    st.write("Silakan masukkan nilai fitur berikut untuk melakukan prediksi.")
+    st.write("Silakan masukkan nilai parameter berikut untuk melakukan prediksi.")
 
-    # =========================
-    # INPUT DATA (TATA LETAK KOLOM)
-    # =========================
     data_input = {}
     cols = st.columns(3)
 
@@ -83,14 +80,10 @@ def prediction_page():
         with col:
             # ===== JENIS KELAMIN =====
             if kolom == "gender":
-                pilihan = st.selectbox(
-                    "Jenis Kelamin",
-                    ["Pria", "Wanita"]
-                )
-                # Penyesuaian dengan pengkodean dataset kardiovaskular
+                pilihan = st.selectbox("Jenis Kelamin", ["Pria", "Wanita"])
                 data_input[kolom] = 2 if pilihan == "Pria" else 1
 
-            # ===== VARIABEL PERILAKU (YA / TIDAK) =====
+            # ===== VARIABEL PERILAKU =====
             elif kolom == "smoke":
                 pilihan = st.selectbox("Kebiasaan Merokok", ["Tidak", "Ya"])
                 data_input[kolom] = 1 if pilihan == "Ya" else 0
@@ -107,14 +100,27 @@ def prediction_page():
             else:
                 nilai_awal = float(df[kolom].mean())
 
+                # Label Bahasa Indonesia
                 label_indonesia = {
+                    # DATASET KESEHATAN
                     "age": "Usia",
                     "height": "Tinggi Badan (cm)",
                     "weight": "Berat Badan (kg)",
                     "ap_hi": "Tekanan Darah Sistolik",
                     "ap_lo": "Tekanan Darah Diastolik",
                     "cholesterol": "Kadar Kolesterol",
-                    "gluc": "Kadar Glukosa"
+                    "gluc": "Kadar Glukosa",
+
+                    # DATASET AIR MINUM
+                    "ph": "pH Air",
+                    "Hardness": "Tingkat Kesadahan Air",
+                    "Solids": "Total Padatan Terlarut (TDS)",
+                    "Chloramines": "Kadar Kloramin",
+                    "Sulfate": "Kadar Sulfat",
+                    "Conductivity": "Daya Hantar Listrik",
+                    "Organic_carbon": "Karbon Organik",
+                    "Trihalomethanes": "Trihalometana",
+                    "Turbidity": "Kekeruhan Air"
                 }
 
                 label_tampil = label_indonesia.get(kolom, kolom)
@@ -125,7 +131,13 @@ def prediction_page():
                     format="%.2f"
                 )
 
+    # =========================
+    # DATAFRAME INPUT (FIX ERROR)
+    # =========================
     input_df = pd.DataFrame([data_input])
+
+    # SAMAKAN URUTAN KOLOM DENGAN SAAT TRAINING
+    input_df = input_df[feature_columns]
 
     # =========================
     # PRA-PEMROSESAN DATA INPUT
