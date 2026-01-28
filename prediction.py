@@ -16,7 +16,7 @@ def prediction_page():
 
     Data yang digunakan untuk prediksi **diinput secara manual**
     dan **tidak berasal dari dataset pelatihan**, sehingga mencerminkan
-    proses **inferensi model** yang sesungguhnya.
+    proses **inferensi model**.
     """)
     st.markdown("---")
 
@@ -92,11 +92,8 @@ def prediction_page():
             format="%.4f"
         )
 
-    # Membentuk DataFrame dari input manual
+    # Membentuk DataFrame (tanpa ditampilkan)
     input_df = pd.DataFrame([data_input])
-
-    st.markdown("**Data input yang digunakan untuk prediksi:**")
-    st.dataframe(input_df, use_container_width=True)
 
     # =========================
     # PRA-PROSES DATA (KONSISTEN)
