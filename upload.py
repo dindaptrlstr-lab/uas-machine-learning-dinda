@@ -54,13 +54,17 @@ def upload_page():
     # =========================
     datasets = {
         "water": {
-            "title": "Data Lingkungan",
+            "title": "Water Potability Dataset",
             "desc": "Dataset kualitas air untuk menentukan kelayakan air minum.",
+            "target": "Potability",
+            "type": "Lingkungan",
             "file": "water_potability.csv"
         },
         "cardio": {
-            "title": "Data Kesehatan",
+            "title": "Cardiovascular Disease Dataset",
             "desc": "Dataset klinis untuk prediksi risiko penyakit jantung.",
+            "target": "cardio",
+            "type": "Kesehatan",
             "file": "cardio_train.csv"
         }
     }
