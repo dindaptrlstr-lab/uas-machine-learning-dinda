@@ -22,28 +22,19 @@ def prediction_page():
     # PENGAMAN ALUR PIPELINE
     # =========================
     if "best_model" not in st.session_state:
-        st.warning(
-            "Silakan jalankan proses **Pemodelan Machine Learning** "
-            "terlebih dahulu."
-        )
+        st.warning("Silakan jalankan menu **Pemodelan Machine Learning** terlebih dahulu.")
         return
 
     if "df" not in st.session_state or "dataset_name" not in st.session_state:
-        st.warning(
-            "Silakan unggah dataset terlebih dahulu "
-            "melalui menu Pemilihan Dataset."
-        )
+        st.warning("Silakan unggah dataset terlebih dahulu.")
         return
 
     if "feature_columns" not in st.session_state:
-        st.warning(
-            "Informasi fitur tidak tersedia. "
-            "Silakan lakukan pelatihan ulang model."
-        )
+        st.warning("Informasi fitur tidak tersedia. Silakan lakukan pelatihan ulang.")
         return
 
     # =========================
-    # AMBIL OBJEK DARI SESSION
+    # AMBIL OBJEK SESSION
     # =========================
     model = st.session_state["best_model"]
     df = st.session_state["df"]
@@ -51,24 +42,25 @@ def prediction_page():
     feature_columns = st.session_state["feature_columns"]
     scaler = st.session_state.get("scaler")
 
-    # Hilangkan kolom ID jika ada
     feature_columns = [f for f in feature_columns if f.lower() != "id"]
 
     # =========================
-    # PENENTUAN LABEL HASIL
+    # LABEL HASIL
     # =========================
     if dataset_name == "cardio_train.csv":
         label_positif = "Berisiko Penyakit Jantung"
         label_negatif = "Tidak Berisiko Penyakit Jantung"
+        tipe_data = "kesehatan"
     elif dataset_name == "water_potability.csv":
         label_positif = "Air Layak Minum"
         label_negatif = "Air Tidak Layak Minum"
+        tipe_data = "air"
     else:
-        st.error("Dataset tidak dikenali oleh sistem.")
+        st.error("Dataset tidak dikenali.")
         return
 
     # =========================
-    # FORM INPUT DATA
+    # INPUT DATA
     # =========================
     st.markdown("---")
     st.subheader("Input Data")
@@ -79,66 +71,27 @@ def prediction_page():
 
     for i, kolom in enumerate(feature_columns):
         col = cols[i % 3]
-
         with col:
-            # ===== JENIS KELAMIN =====
-            if kolom == "gender":
-                pilihan = st.selectbox("Jenis Kelamin", ["Pria", "Wanita"])
-                data_input[kolom] = 2 if pilihan == "Pria" else 1
-
-            # ===== PERILAKU (YA / TIDAK) =====
-            elif kolom == "smoke":
-                pilihan = st.selectbox("Kebiasaan Merokok", ["Tidak", "Ya"])
-                data_input[kolom] = 1 if pilihan == "Ya" else 0
-
-            elif kolom == "alco":
-                pilihan = st.selectbox("Konsumsi Alkohol", ["Tidak", "Ya"])
-                data_input[kolom] = 1 if pilihan == "Ya" else 0
-
-            elif kolom == "active":
-                pilihan = st.selectbox("Aktivitas Fisik", ["Tidak Aktif", "Aktif"])
-                data_input[kolom] = 1 if pilihan == "Aktif" else 0
-
-            # ===== FITUR NUMERIK =====
-            else:
-                nilai_awal = float(df[kolom].mean())
-
-                label_indonesia = {
-                    "age": "Usia",
-                    "height": "Tinggi Badan (cm)",
-                    "weight": "Berat Badan (kg)",
-                    "ap_hi": "Tekanan Darah Sistolik",
-                    "ap_lo": "Tekanan Darah Diastolik",
-                    "cholesterol": "Kadar Kolesterol",
-                    "gluc": "Kadar Glukosa"
-                }
-
-                label_tampil = label_indonesia.get(kolom, kolom)
-
-                data_input[kolom] = st.number_input(
-                    label=label_tampil,
-                    value=nilai_awal,
-                    format="%.2f"
-                )
+            nilai_awal = float(df[kolom].mean())
+            data_input[kolom] = st.number_input(
+                label=kolom,
+                value=nilai_awal,
+                format="%.2f"
+            )
 
     # =========================
-    # DATAFRAME INPUT (FIX ERROR)
+    # PRA-PEMROSESAN
     # =========================
     input_df = pd.DataFrame([data_input])
-
-    # ⚠️ PENTING: SAMAKAN URUTAN KOLOM DENGAN SAAT TRAINING
     input_df = input_df[feature_columns]
 
-    # =========================
-    # PRA-PEMROSESAN DATA INPUT
-    # =========================
     if scaler is not None:
         input_diproses = scaler.transform(input_df)
     else:
         input_diproses = input_df.values
 
     # =========================
-    # PROSES PREDIKSI
+    # PREDIKSI + REKOMENDASI
     # =========================
     st.markdown("---")
     if st.button("🔍 Jalankan Prediksi"):
@@ -146,18 +99,72 @@ def prediction_page():
         hasil_prediksi = model.predict(input_diproses)[0]
 
         st.subheader("Hasil Prediksi")
-        if hasil_prediksi == 1:
-            st.success(f"✅ **{label_positif}**")
-        else:
-            st.error(f"❌ **{label_negatif}**")
+
+        # =====================
+        # HASIL + REKOMENDASI AIR
+        # =====================
+        if tipe_data == "air":
+            if hasil_prediksi == 1:
+                st.success("✅ **Air Layak Minum**")
+
+                st.markdown("### ✅ Rekomendasi")
+                st.markdown("""
+                Berdasarkan hasil prediksi, kualitas air **layak untuk dikonsumsi**.
+
+                **Saran:**
+                - Air dapat digunakan untuk kebutuhan sehari-hari
+                - Tetap lakukan pengecekan kualitas air secara berkala
+                - Simpan air di wadah yang bersih dan tertutup
+                """)
+            else:
+                st.error("❌ **Air Tidak Layak Minum**")
+
+                st.markdown("### ⚠️ Rekomendasi")
+                st.markdown("""
+                Berdasarkan hasil prediksi, air **tidak layak untuk dikonsumsi langsung**.
+
+                **Saran:**
+                - Lakukan penyaringan atau perebusan sebelum digunakan
+                - Gunakan alat filtrasi air (filter / RO)
+                - Hindari konsumsi langsung tanpa pengolahan
+                """)
+
+        # =====================
+        # HASIL + REKOMENDASI KESEHATAN
+        # =====================
+        if tipe_data == "kesehatan":
+            if hasil_prediksi == 1:
+                st.error("⚠️ **Berisiko Penyakit Jantung**")
+
+                st.markdown("### ⚠️ Rekomendasi")
+                st.markdown("""
+                Berdasarkan hasil prediksi, terdapat **risiko penyakit jantung**.
+
+                **Saran:**
+                - Lakukan pemeriksaan kesehatan secara berkala
+                - Jaga pola makan sehat dan rendah lemak
+                - Tingkatkan aktivitas fisik
+                - Konsultasi dengan tenaga medis
+                """)
+            else:
+                st.success("✅ **Tidak Berisiko Penyakit Jantung**")
+
+                st.markdown("### ✅ Rekomendasi")
+                st.markdown("""
+                Berdasarkan hasil prediksi, risiko penyakit jantung **tergolong rendah**.
+
+                **Saran:**
+                - Pertahankan pola hidup sehat
+                - Tetap aktif berolahraga
+                - Lakukan pemeriksaan kesehatan rutin
+                """)
 
     # =========================
-    # CATATAN PENTING
+    # CATATAN
     # =========================
     st.markdown("---")
     st.info(
         "Catatan:\n"
         "- Hasil prediksi merupakan **hasil inferensi model**, "
-        "bukan diagnosis medis dan tidak menggantikan "
-        "pemeriksaan oleh tenaga kesehatan profesional."
+        "bukan diagnosis medis dan tidak menggantikan pemeriksaan profesional."
     )
