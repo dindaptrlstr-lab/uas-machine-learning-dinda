@@ -1,4 +1,4 @@
-konsisten pakai bahasa indonesia import streamlit as st 
+import streamlit as st 
 
 def contact_page():
     st.subheader("📞 Contact")
@@ -12,3 +12,4 @@ def contact_page():
     
     🔗 GitHub: https://github.com/dindaptrlstr-lab
     """)
+
