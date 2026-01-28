@@ -1,4 +1,4 @@
-revisi ditambahin jelasin tahapannya apa aja pada setiap metode import streamlit as st
+import streamlit as st
 import pandas as pd
 import numpy as np
 from scipy.special import expit  # sigmoid stabil numerik
@@ -230,4 +230,5 @@ def analysis_model_page():
         "Pelatihan dan evaluasi model sebenarnya "
         "dilakukan pada menu **Machine Learning**."
     )
+
 
