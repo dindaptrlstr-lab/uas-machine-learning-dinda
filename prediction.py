@@ -4,17 +4,19 @@ import numpy as np
 
 
 def prediction_page():
-    st.subheader("Prediction App")
+    st.subheader("Aplikasi Prediksi")
 
     # =========================
     # DESKRIPSI HALAMAN
     # =========================
     st.markdown("""
     Halaman ini digunakan untuk melakukan **prediksi data baru**
-    menggunakan **model terbaik** yang diperoleh dari proses training
-    pada menu **Machine Learning**.  
+    menggunakan **model terbaik** yang diperoleh dari proses pelatihan
+    pada menu **Machine Learning**.
+
     Data yang digunakan untuk prediksi **diinput secara manual**
-    dan **bukan berasal dari dataset pelatihan**.
+    dan **tidak berasal dari dataset pelatihan**, sehingga mencerminkan
+    proses **inferensi model** yang sesungguhnya.
     """)
     st.markdown("---")
 
@@ -26,11 +28,11 @@ def prediction_page():
         return
 
     if "df" not in st.session_state or "dataset_name" not in st.session_state:
-        st.warning("Silakan upload dataset terlebih dahulu melalui sidebar.")
+        st.warning("Silakan unggah dataset terlebih dahulu melalui sidebar.")
         return
 
     if "feature_columns" not in st.session_state:
-        st.warning("Informasi fitur tidak tersedia. Silakan jalankan training ulang.")
+        st.warning("Informasi fitur tidak tersedia. Silakan lakukan pelatihan ulang.")
         return
 
     # =========================
@@ -43,15 +45,15 @@ def prediction_page():
     scaler = st.session_state.get("scaler")
 
     # =========================
-    # TARGET & LABEL OTOMATIS
+    # LABEL TARGET OTOMATIS
     # =========================
     if dataset_name == "water_potability.csv":
-        positive_label = "Layak Minum"
-        negative_label = "Tidak Layak Minum"
+        label_positif = "Layak Minum"
+        label_negatif = "Tidak Layak Minum"
 
     elif dataset_name == "cardio_train.csv":
-        positive_label = "Berisiko Penyakit Jantung"
-        negative_label = "Tidak Berisiko"
+        label_positif = "Berisiko Penyakit Jantung"
+        label_negatif = "Tidak Berisiko"
 
     else:
         st.error("Dataset tidak dikenali.")
@@ -70,54 +72,54 @@ def prediction_page():
     st.subheader("Input Data Manual")
 
     st.write(
-        "Masukkan nilai setiap fitur secara **manual** "
-        "untuk memprediksi **data baru di luar dataset pelatihan**."
+        "Masukkan nilai setiap fitur secara **manual** untuk melakukan "
+        "prediksi pada **data baru di luar dataset pelatihan**."
     )
 
-    input_data = {}
+    data_input = {}
 
-    for col in feature_columns:
+    for kolom in feature_columns:
 
-        # Default value = rata-rata (aman & masuk akal)
-        if pd.api.types.is_numeric_dtype(df[col]):
-            default_value = float(df[col].mean())
+        # Nilai awal menggunakan rata-rata agar memudahkan pengguna
+        if pd.api.types.is_numeric_dtype(df[kolom]):
+            nilai_awal = float(df[kolom].mean())
         else:
-            default_value = 0.0
+            nilai_awal = 0.0
 
-        input_data[col] = st.number_input(
-            label=f"Nilai {col}",
-            value=default_value,
+        data_input[kolom] = st.number_input(
+            label=f"Nilai {kolom}",
+            value=nilai_awal,
             format="%.4f"
         )
 
-    # Buat DataFrame dari input manual
-    input_df = pd.DataFrame([input_data])
+    # Membentuk DataFrame dari input manual
+    input_df = pd.DataFrame([data_input])
 
     st.markdown("**Data input yang digunakan untuk prediksi:**")
     st.dataframe(input_df, use_container_width=True)
 
     # =========================
-    # PREPROCESSING KONSISTEN
+    # PRA-PROSES DATA (KONSISTEN)
     # =========================
     if scaler is not None:
-        input_processed = scaler.transform(input_df)
+        input_diproses = scaler.transform(input_df)
     else:
-        input_processed = input_df.values
+        input_diproses = input_df.values
 
     # =========================
     # JALANKAN PREDIKSI
     # =========================
     if st.button("🔍 Jalankan Prediksi"):
 
-        prediction = model.predict(input_processed)[0]
+        hasil_prediksi = model.predict(input_diproses)[0]
 
         st.markdown("---")
         st.subheader("Hasil Prediksi")
 
-        if prediction == 1:
-            st.success(f"✅ **{positive_label}**")
+        if hasil_prediksi == 1:
+            st.success(f"✅ **{label_positif}**")
         else:
-            st.error(f"❌ **{negative_label}**")
+            st.error(f"❌ **{label_negatif}**")
 
         st.write(
             "Hasil prediksi diperoleh dari **model terbaik** "
