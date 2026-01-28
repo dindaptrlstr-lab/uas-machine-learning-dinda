@@ -14,9 +14,8 @@ def prediction_page():
     menggunakan **model terbaik** hasil pelatihan pada menu
     **Machine Learning**.
 
-    Data untuk prediksi **diinput secara manual** dan **bukan berasal
-    dari dataset pelatihan**, sehingga merepresentasikan proses
-    **inferensi model**.
+    Data dimasukkan secara **manual**, tidak berasal dari dataset pelatihan,
+    sehingga mencerminkan proses **inferensi model**.
     """)
     st.markdown("---")
 
@@ -45,6 +44,11 @@ def prediction_page():
     scaler = st.session_state.get("scaler")
 
     # =========================
+    # HAPUS KOLOM ID (TIDAK DIPAKAI)
+    # =========================
+    feature_columns = [f for f in feature_columns if f.lower() != "id"]
+
+    # =========================
     # LABEL HASIL PREDIKSI
     # =========================
     if dataset_name == "water_potability.csv":
@@ -67,36 +71,49 @@ def prediction_page():
     st.markdown("---")
 
     # =========================
+    # LABEL INPUT BAHASA INDONESIA
+    # =========================
+    label_indonesia = {
+        "age": "Usia (hari)",
+        "gender": "Jenis Kelamin (1 = Pria, 2 = Wanita)",
+        "height": "Tinggi Badan (cm)",
+        "weight": "Berat Badan (kg)",
+        "ap_hi": "Tekanan Darah Sistolik",
+        "ap_lo": "Tekanan Darah Diastolik",
+        "cholesterol": "Kadar Kolesterol",
+        "gluc": "Kadar Glukosa",
+        "smoke": "Kebiasaan Merokok (0 = Tidak, 1 = Ya)",
+        "alco": "Konsumsi Alkohol (0 = Tidak, 1 = Ya)",
+        "active": "Aktivitas Fisik (0 = Tidak, 1 = Ya)"
+    }
+
+    # =========================
     # INPUT DATA MANUAL (KE SAMPING)
     # =========================
     st.subheader("Input Data Manual")
 
     st.write(
-        "Masukkan nilai setiap fitur secara **manual**. "
-        "Input disusun **ke samping** agar lebih ringkas dan mudah dibaca."
+        "Masukkan nilai setiap variabel berikut "
+        "untuk melakukan prediksi data baru."
     )
 
     data_input = {}
-
-    # Buat kolom (3 input per baris)
     cols = st.columns(3)
 
     for i, kolom in enumerate(feature_columns):
         col = cols[i % 3]
 
         with col:
-            if pd.api.types.is_numeric_dtype(df[kolom]):
-                nilai_awal = float(df[kolom].mean())
-            else:
-                nilai_awal = 0.0
+            nilai_awal = float(df[kolom].mean())
+
+            label_tampil = label_indonesia.get(kolom, kolom)
 
             data_input[kolom] = st.number_input(
-                label=f"{kolom}",
+                label=label_tampil,
                 value=nilai_awal,
                 format="%.2f"
             )
 
-    # Bentuk DataFrame (tidak ditampilkan)
     input_df = pd.DataFrame([data_input])
 
     # =========================
@@ -108,7 +125,7 @@ def prediction_page():
         input_diproses = input_df.values
 
     # =========================
-    # PREDIKSI
+    # JALANKAN PREDIKSI
     # =========================
     st.markdown("---")
 
@@ -134,8 +151,8 @@ def prediction_page():
     st.markdown("---")
     st.info(
         "Catatan:\n"
-        "- Data prediksi diinput secara **manual**.\n"
+        "- Kolom **ID tidak digunakan** karena tidak berpengaruh terhadap prediksi.\n"
+        "- Data dimasukkan secara **manual**.\n"
         "- Prediksi merepresentasikan proses **inferensi model**.\n"
-        "- Hasil digunakan untuk **analisis dan pembelajaran**.\n"
         "- Bukan alat diagnosis medis."
     )
