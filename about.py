@@ -7,7 +7,7 @@ def show_about():
     # PENGAMAN (SESSION STATE)
     # =========================
     if "df" not in st.session_state:
-        st.warning("Silakan pilih dataset terlebih dahulu pada menu Upload Data.")
+        st.warning("Silakan upload dataset terlebih dahulu pada menu Upload Data.")
         return
 
     df = st.session_state["df"]
@@ -135,5 +135,4 @@ def show_about():
         "- Target variabel ditentukan secara otomatis atau pada menu Machine Learning.\n"
         "- Hasil evaluasi model ditampilkan pada menu Machine Learning."
     )
-
 
