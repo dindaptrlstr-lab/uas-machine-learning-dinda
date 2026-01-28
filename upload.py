@@ -18,12 +18,12 @@ def upload_page():
     st.markdown("<br>", unsafe_allow_html=True)
 
     # =========================
-    # STYLE CARD (NETRAL, NYATU BANNER)
+    # STYLE CARD (NETRAL, NYATU DENGAN BANNER)
     # =========================
     st.markdown("""
     <style>
     .dataset-card {
-        background-color: #EEF4FB;   /* sama dengan banner UAS */
+        background-color: #EEF4FB;
         padding: 24px;
         border-radius: 16px;
         height: 100%;
@@ -38,19 +38,14 @@ def upload_page():
 
     .dataset-desc {
         font-size: 14px;
-        margin-bottom: 10px;
+        margin-bottom: 14px;
         color: #444444;
-    }
-
-    .dataset-meta {
-        font-size: 13px;
-        color: #555555;
     }
     </style>
     """, unsafe_allow_html=True)
 
     # =========================
-    # KONFIGURASI DATASET
+    # KONFIGURASI DATASET (LOGIKA)
     # =========================
     datasets = {
         "water": {
@@ -79,10 +74,6 @@ def upload_page():
         <div class="dataset-card">
             <div class="dataset-title">{datasets['water']['title']}</div>
             <div class="dataset-desc">{datasets['water']['desc']}</div>
-            <div class="dataset-meta">
-                Domain: {datasets['water']['type']}<br>
-                Target: <code>{datasets['water']['target']}</code>
-            </div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -97,10 +88,6 @@ def upload_page():
         <div class="dataset-card">
             <div class="dataset-title">{datasets['cardio']['title']}</div>
             <div class="dataset-desc">{datasets['cardio']['desc']}</div>
-            <div class="dataset-meta">
-                Domain: {datasets['cardio']['type']}<br>
-                Target: <code>{datasets['cardio']['target']}</code>
-            </div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -131,6 +118,7 @@ def load_dataset(config):
 
     # =========================
     # SIMPAN KE SESSION STATE
+    # (LOGIKA ML TETAP UTUH)
     # =========================
     st.session_state["df"] = df
     st.session_state["dataset_name"] = config["file"]
