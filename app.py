@@ -1,4 +1,4 @@
-konsisten pakai bahasa indonesia import streamlit as st
+import streamlit as st
 
 # ======================
 # IMPORT HALAMAN
@@ -85,4 +85,5 @@ with tabs[5]:
 
 with tabs[6]:
     contact_page()
+
 
