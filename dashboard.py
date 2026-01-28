@@ -120,3 +120,4 @@ def dashboard_page():
             "Dataset hanya memiliki satu fitur numerik, "
             "sehingga analisis korelasi tidak dapat dilakukan."
         )
+
