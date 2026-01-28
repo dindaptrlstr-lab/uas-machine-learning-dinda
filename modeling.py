@@ -209,16 +209,54 @@ def modeling_page():
         list(conf_matrices.keys())
     )
 
-    st.write(f"Confusion Matrix — **{selected_model}**")
-    st.dataframe(conf_matrices[selected_model])
+    cm = conf_matrices[selected_model]
 
-    st.markdown("""
-    **Keterangan:**
-    - True Positive (TP): Prediksi positif & aktual positif
-    - True Negative (TN): Prediksi negatif & aktual negatif
-    - False Positive (FP): Prediksi positif tapi aktual negatif
-    - False Negative (FN): Prediksi negatif tapi aktual positif
+    # Ambil nilai confusion matrix
+    tn, fp, fn, tp = cm.ravel()
+
+    # Buat DataFrame dengan label jelas
+    cm_labeled = pd.DataFrame(
+        [
+            [tp, fp],
+            [fn, tn]
+        ],
+        index=[
+            "Prediksi Positif (1)",
+            "Prediksi Negatif (0)"
+        ],
+        columns=[
+            "Aktual Positif (1)",
+            "Aktual Negatif (0)"
+        ]
+    )
+
+    st.write(f"Confusion Matrix — **{selected_model}**")
+    st.dataframe(cm_labeled, use_container_width=True)
+
+    # =========================
+    # KETERANGAN DETAIL
+    # =========================
+    st.markdown("### Keterangan Confusion Matrix")
+
+    st.markdown(f"""
+    - **True Positive (TP)** = {tp}  
+      Model memprediksi **positif**, dan data **benar-benar positif**.
+
+    - **False Positive (FP)** = {fp}  
+      Model memprediksi **positif**, tetapi data **sebenarnya negatif**.
+
+    - **False Negative (FN)** = {fn}  
+      Model memprediksi **negatif**, tetapi data **sebenarnya positif**.
+
+    - **True Negative (TN)** = {tn}  
+      Model memprediksi **negatif**, dan data **benar-benar negatif**.
     """)
+
+    st.info(
+        "Baris menunjukkan **hasil prediksi model**, "
+        "sedangkan kolom menunjukkan **kondisi aktual (kenyataan)**."
+    )
+
 
     # =========================
     # SIMPAN MODEL TERBAIK
@@ -229,3 +267,4 @@ def modeling_page():
         "Model terbaik telah disimpan dan akan digunakan "
         "pada menu **Prediction App**."
     )
+
