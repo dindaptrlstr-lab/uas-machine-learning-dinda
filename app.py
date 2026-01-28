@@ -1,4 +1,4 @@
-import streamlit as st
+konsisten pakai bahasa indonesia import streamlit as st
 
 # ======================
 # IMPORT HALAMAN
@@ -16,12 +16,12 @@ from contact import contact_page
 # KONFIGURASI HALAMAN
 # ======================
 st.set_page_config(
-    page_title="Dashboard Klasifikasi Machine Learning",
+    page_title="Machine Learning Classification Dashboard",
     layout="wide"
 )
 
 # ======================
-# MENYEMBUNYIKAN SIDEBAR (CSS)
+# HILANGKAN SIDEBAR TOTAL (CSS)
 # ======================
 st.markdown("""
 <style>
@@ -35,11 +35,11 @@ section[data-testid="stSidebar"] {
 # ======================
 # HEADER UTAMA
 # ======================
-st.title("Dashboard Klasifikasi Machine Learning")
+st.title("Machine Learning Classification Dashboard")
 
 st.caption(
     "Dashboard untuk analisis dan klasifikasi data kesehatan serta lingkungan "
-    "menggunakan pendekatan Machine Learning."
+    "dengan pendekatan Machine Learning."
 )
 
 st.markdown("---")
@@ -50,20 +50,20 @@ st.info(
 )
 
 # ======================
-# TAB NAVIGASI (ALUR MACHINE LEARNING)
+# TAB NAVIGASI (ALUR ML)
 # ======================
 tabs = st.tabs([
-    "Pemilihan Dataset",
-    "Informasi Dataset",
-    "Eksplorasi Data (EDA)",
-    "Pemodelan Machine Learning",
+    "Pilih Dataset",
+    "About Dataset",
+    "Exploratory Data Analysis",
+    "Machine Learning",
     "Tahapan Metode",
-    "Prediksi",
-    "Kontak"
+    "Prediction",
+    "Contact"
 ])
 
 # ======================
-# ISI MASING-MASING TAB
+# ISI TAB
 # ======================
 with tabs[0]:
     upload_page()
@@ -85,3 +85,4 @@ with tabs[5]:
 
 with tabs[6]:
     contact_page()
+
