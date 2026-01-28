@@ -28,23 +28,23 @@ def modeling_page():
     # PENGAMAN DATASET
     # =========================
     if "df" not in st.session_state or "dataset_name" not in st.session_state:
-        st.warning("Silakan unggah dataset terlebih dahulu melalui menu Pemilihan Dataset.")
+        st.warning("Silakan upload dataset terlebih dahulu melalui menu Upload Dataset.")
         return
 
     df = st.session_state["df"]
     dataset_name = st.session_state["dataset_name"]
 
     # =========================
-    # DESKRIPSI HALAMAN
+    # JUDUL & DESKRIPSI
     # =========================
-    st.subheader("Pemodelan Machine Learning")
+    st.subheader("Machine Learning")
 
     st.markdown("""
-    Halaman ini menampilkan proses **pemodelan dan evaluasi**
-    beberapa algoritma klasifikasi menggunakan pendekatan
-    **Machine Learning**.
+    Halaman ini digunakan untuk melakukan **pelatihan (training)** dan
+    **evaluasi model klasifikasi** menggunakan pipeline
+    **Machine Learning end-to-end**.
 
-    **Proses yang dilakukan meliputi:**
+    Tahapan yang dilakukan:
     - Preprocessing data
     - Pembagian data latih dan data uji
     - Pelatihan beberapa algoritma klasifikasi
@@ -55,7 +55,7 @@ def modeling_page():
     st.markdown("---")
 
     # =========================
-    # PENENTUAN TARGET OTOMATIS
+    # TARGET OTOMATIS
     # =========================
     if dataset_name == "water_potability.csv":
         target_col = "Potability"
@@ -64,11 +64,11 @@ def modeling_page():
         target_col = "cardio"
         dataset_type = "Kesehatan"
     else:
-        st.error("Dataset tidak dikenali oleh sistem.")
+        st.error("Dataset tidak dikenali.")
         return
 
     st.write(f"**Dataset:** `{dataset_name}` ({dataset_type})")
-    st.write(f"**Variabel Target:** `{target_col}`")
+    st.write(f"**Target Klasifikasi:** `{target_col}`")
 
     st.session_state["target_col"] = target_col
     st.session_state["dataset_type"] = dataset_type
@@ -76,29 +76,26 @@ def modeling_page():
     st.markdown("---")
 
     # =========================
-    # PRA-PEMROSESAN DATA
+    # PREPROCESSING
     # =========================
-    st.subheader("Pra-pemrosesan Data")
+    st.subheader("Preprocessing Data")
 
     df_model = df.copy()
 
     for col in df_model.columns:
         df_model[col] = pd.to_numeric(df_model[col], errors="coerce")
 
-    jumlah_awal = len(df_model)
+    before_rows = len(df_model)
     df_model = df_model.dropna()
-    jumlah_akhir = len(df_model)
+    after_rows = len(df_model)
 
-    st.info(
-        f"Pembersihan data selesai: "
-        f"{jumlah_awal - jumlah_akhir} baris dihapus karena nilai hilang."
-    )
+    st.info(f"Data dibersihkan: {before_rows - after_rows} baris dihapus karena missing value.")
 
     X = df_model.drop(columns=[target_col])
     y = df_model[target_col]
 
     # =========================
-    # PEMBAGIAN DATA LATIH & UJI
+    # TRAIN TEST SPLIT
     # =========================
     X_train, X_test, y_train, y_test = train_test_split(
         X,
@@ -109,7 +106,7 @@ def modeling_page():
     )
 
     # =========================
-    # STANDARISASI FITUR
+    # FEATURE SCALING
     # =========================
     scaler = StandardScaler()
     X_train_scaled = scaler.fit_transform(X_train)
@@ -136,18 +133,21 @@ def modeling_page():
     }
 
     results = []
-    confusion_matrices = {}
+    conf_matrices = {}
 
-    model_terbaik = None
-    nama_model_terbaik = None
-    nilai_f1_terbaik = 0
+    best_model = None
+    best_model_name = None
+    best_metrics = {}
+    best_f1 = 0
 
     # =========================
-    # EVALUASI MODEL
+    # TRAINING & EVALUATION
     # =========================
-    for nama, model in models.items():
+    st.subheader("Training & Evaluasi Model")
 
-        if nama in ["Logistic Regression", "Support Vector Machine (SVM)"]:
+    for name, model in models.items():
+
+        if name in ["Logistic Regression", "Support Vector Machine (SVM)"]:
             model.fit(X_train_scaled, y_train)
             y_pred = model.predict(X_test_scaled)
         else:
@@ -159,51 +159,62 @@ def modeling_page():
         rec = recall_score(y_test, y_pred, zero_division=0)
         f1 = f1_score(y_test, y_pred, zero_division=0)
 
-        confusion_matrices[nama] = confusion_matrix(y_test, y_pred)
+        conf_matrices[name] = confusion_matrix(y_test, y_pred)
 
         results.append({
-            "Algoritma": nama,
-            "Akurasi": round(acc, 4),
-            "Presisi": round(prec, 4),
-            "Recall": round(rec, 4),
-            "F1-Score": round(f1, 4)
+            "Algoritma": name,
+            "Accuracy": round(acc * 100, 2),
+            "Precision": round(prec * 100, 2),
+            "Recall": round(rec * 100, 2),
+            "F1-Score": round(f1 * 100, 2)
         })
 
-        if f1 > nilai_f1_terbaik:
-            nilai_f1_terbaik = f1
-            model_terbaik = model
-            nama_model_terbaik = nama
+        if f1 > best_f1:
+            best_f1 = f1
+            best_model = model
+            best_model_name = name
+            best_metrics = {
+                "accuracy": acc * 100,
+                "precision": prec * 100,
+                "recall": rec * 100,
+                "f1": f1 * 100
+            }
 
-    hasil_df = pd.DataFrame(results)
+    results_df = pd.DataFrame(results)
 
     # =========================
-    # HASIL EVALUASI MODEL
+    # HASIL EVALUASI
     # =========================
     st.subheader("Hasil Evaluasi Model")
-    st.dataframe(hasil_df, use_container_width=True)
+    st.dataframe(results_df, use_container_width=True)
 
     st.success(
         f"""
-        **Model Terbaik: {nama_model_terbaik}**
+        **Model Terbaik: {best_model_name}**
 
-        Model ini dipilih karena memiliki nilai **F1-Score tertinggi**
-        dibandingkan model klasifikasi lainnya.
+        - Accuracy  : {best_metrics['accuracy']:.2f}
+        - Precision : {best_metrics['precision']:.2f}
+        - Recall    : {best_metrics['recall']:.2f}
+        - F1-Score  : {best_metrics['f1']:.2f}
         """
     )
 
-    # =========================
+      # =========================
     # CONFUSION MATRIX
     # =========================
     st.subheader("Confusion Matrix")
 
     selected_model = st.selectbox(
-        "Pilih model untuk melihat Confusion Matrix",
-        list(confusion_matrices.keys())
+        "Pilih model untuk melihat confusion matrix",
+        list(conf_matrices.keys())
     )
 
-    cm = confusion_matrices[selected_model]
+    cm = conf_matrices[selected_model]
+
+    # Ambil nilai confusion matrix
     tn, fp, fn, tp = cm.ravel()
 
+    # Buat DataFrame dengan label jelas
     cm_labeled = pd.DataFrame(
         [
             [tp, fp],
@@ -219,15 +230,40 @@ def modeling_page():
         ]
     )
 
+    st.write(f"Confusion Matrix — **{selected_model}**")
     st.dataframe(cm_labeled, use_container_width=True)
+
+    # =========================
+    # KETERANGAN DETAIL
+    # =========================
+    st.markdown("### Keterangan Confusion Matrix")
+
+    st.markdown(f"""
+    - **True Positive (TP)** = {tp}  
+      Model memprediksi **positif**, dan data **benar-benar positif**.
+
+    - **False Positive (FP)** = {fp}  
+      Model memprediksi **positif**, tetapi data **sebenarnya negatif**.
+
+    - **False Negative (FN)** = {fn}  
+      Model memprediksi **negatif**, tetapi data **sebenarnya positif**.
+
+    - **True Negative (TN)** = {tn}  
+      Model memprediksi **negatif**, dan data **benar-benar negatif**.
+    """)
+
+    st.info(
+        "Baris menunjukkan **hasil prediksi model**, "
+        "sedangkan kolom menunjukkan **kondisi aktual (kenyataan)**."
+    )
+
 
     # =========================
     # SIMPAN MODEL TERBAIK
     # =========================
-    st.session_state["best_model"] = model_terbaik
-    st.session_state["best_model_name"] = nama_model_terbaik
+    st.session_state["best_model"] = best_model
 
     st.info(
         "Model terbaik telah disimpan dan akan digunakan "
-        "pada halaman **Prediksi**."
+        "pada menu **Prediction App**."
     )
