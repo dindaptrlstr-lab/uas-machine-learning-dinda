@@ -12,8 +12,9 @@ def prediction_page():
     st.markdown("""
     Halaman ini digunakan untuk melakukan **prediksi data baru**
     menggunakan **model terbaik** yang diperoleh dari proses training
-    pada menu **Machine Learning**. Model dipilih berdasarkan **F1-Score terbaik** dan digunakan kembali
-    secara konsisten untuk proses inferensi.
+    pada menu **Machine Learning**.  
+    Data yang digunakan untuk prediksi **diinput secara manual**
+    dan **bukan berasal dari dataset pelatihan**.
     """)
     st.markdown("---")
 
@@ -45,12 +46,10 @@ def prediction_page():
     # TARGET & LABEL OTOMATIS
     # =========================
     if dataset_name == "water_potability.csv":
-        target_col = "Potability"
         positive_label = "Layak Minum"
         negative_label = "Tidak Layak Minum"
 
     elif dataset_name == "cardio_train.csv":
-        target_col = "cardio"
         positive_label = "Berisiko Penyakit Jantung"
         negative_label = "Tidak Berisiko"
 
@@ -66,17 +65,35 @@ def prediction_page():
     st.markdown("---")
 
     # =========================
-    # INPUT DATA OTOMATIS
+    # INPUT DATA MANUAL
     # =========================
-    st.subheader("Data Input")
-
-    input_df = df[feature_columns].iloc[-1:].copy()
+    st.subheader("Input Data Manual")
 
     st.write(
-        "Data input diambil dari **baris terakhir dataset** "
-        "sebagai contoh observasi baru untuk prediksi."
+        "Masukkan nilai setiap fitur secara **manual** "
+        "untuk memprediksi **data baru di luar dataset pelatihan**."
     )
 
+    input_data = {}
+
+    for col in feature_columns:
+
+        # Default value = rata-rata (aman & masuk akal)
+        if pd.api.types.is_numeric_dtype(df[col]):
+            default_value = float(df[col].mean())
+        else:
+            default_value = 0.0
+
+        input_data[col] = st.number_input(
+            label=f"Nilai {col}",
+            value=default_value,
+            format="%.4f"
+        )
+
+    # Buat DataFrame dari input manual
+    input_df = pd.DataFrame([input_data])
+
+    st.markdown("**Data input yang digunakan untuk prediksi:**")
     st.dataframe(input_df, use_container_width=True)
 
     # =========================
@@ -103,7 +120,7 @@ def prediction_page():
             st.error(f"❌ **{negative_label}**")
 
         st.write(
-            "Hasil ini diperoleh dari **model terbaik** "
+            "Hasil prediksi diperoleh dari **model terbaik** "
             "berdasarkan evaluasi **F1-Score** "
             "pada tahap Machine Learning."
         )
@@ -114,8 +131,8 @@ def prediction_page():
     st.markdown("---")
     st.info(
         "Catatan:\n"
-        "- Prediksi bersifat **klasifikasi**, bukan prediksi waktu.\n"
-        "- Data input berasal dari dataset yang di-upload.\n"
+        "- Data untuk prediksi diinput secara **manual**.\n"
+        "- Prediksi merepresentasikan proses **inferensi model**.\n"
         "- Hasil prediksi digunakan untuk **analisis dan pembelajaran**.\n"
         "- Model tidak dimaksudkan sebagai alat diagnosis medis."
     )
