@@ -19,7 +19,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
-
 from catboost import CatBoostClassifier
 
 
@@ -29,28 +28,21 @@ def modeling_page():
     # PENGAMAN DATASET
     # =========================
     if "df" not in st.session_state or "dataset_name" not in st.session_state:
-        st.warning("Silakan upload dataset terlebih dahulu melalui sidebar.")
+        st.warning("Silakan pilih dataset terlebih dahulu pada menu Upload Dataset.")
         return
 
     df = st.session_state["df"]
     dataset_name = st.session_state["dataset_name"]
 
     # =========================
-    # JUDUL & DESKRIPSI HALAMAN
+    # JUDUL & DESKRIPSI
     # =========================
-    st.subheader("Machine Learning")
+    st.subheader("Machine Learning – Training & Evaluasi Model")
 
     st.markdown("""
-    Halaman ini digunakan untuk melakukan **pelatihan (training)**
-    dan **evaluasi model klasifikasi** menggunakan pipeline
-    **Machine Learning end-to-end**.
-
-    Proses yang dilakukan meliputi:
-    - Preprocessing data
-    - Pembagian data latih dan data uji
-    - Pelatihan beberapa algoritma klasifikasi
-    - Evaluasi performa model
-    - Pemilihan model terbaik
+    Halaman ini menampilkan proses **pelatihan dan evaluasi model klasifikasi**
+    menggunakan pendekatan **Machine Learning end-to-end**, mulai dari
+    preprocessing hingga pemilihan model terbaik.
     """)
 
     st.markdown("---")
@@ -71,7 +63,6 @@ def modeling_page():
     st.write(f"**Dataset:** `{dataset_name}` ({dataset_type})")
     st.write(f"**Target Klasifikasi:** `{target_col}`")
 
-    # Simpan target & tipe dataset untuk halaman lain
     st.session_state["target_col"] = target_col
     st.session_state["dataset_type"] = dataset_type
 
@@ -84,7 +75,6 @@ def modeling_page():
 
     df_model = df.copy()
 
-    # Pastikan seluruh kolom numerik
     for col in df_model.columns:
         df_model[col] = pd.to_numeric(df_model[col], errors="coerce")
 
@@ -92,18 +82,19 @@ def modeling_page():
     df_model = df_model.dropna()
     after_rows = len(df_model)
 
-    st.info(f"Data dibersihkan: **{before_rows - after_rows}** baris dibuang karena missing value.")
+    st.info(
+        f"Preprocessing: **{before_rows - after_rows}** baris "
+        "dihapus karena missing value."
+    )
 
-    # Pisahkan fitur & target
     X = df_model.drop(columns=[target_col])
     y = df_model[target_col]
 
     # =========================
-    # TRAIN TEST SPLIT
+    # SPLIT DATA
     # =========================
     X_train, X_test, y_train, y_test = train_test_split(
-        X,
-        y,
+        X, y,
         test_size=0.2,
         random_state=42,
         stratify=y
@@ -116,7 +107,6 @@ def modeling_page():
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
 
-    # Simpan scaler & fitur untuk prediksi
     st.session_state["scaler"] = scaler
     st.session_state["feature_columns"] = X.columns.tolist()
 
@@ -149,6 +139,7 @@ def modeling_page():
     best_model = None
     best_model_name = None
     best_f1 = 0
+    best_metrics = {}
 
     # =========================
     # TRAINING & EVALUATION
@@ -157,7 +148,6 @@ def modeling_page():
 
     for name, model in models.items():
 
-        # Scaling hanya untuk model berbasis jarak / linear
         if name in ["Logistic Regression", "Support Vector Machine (SVM)"]:
             model.fit(X_train_scaled, y_train)
             y_pred = model.predict(X_test_scaled)
@@ -184,6 +174,12 @@ def modeling_page():
             best_f1 = f1
             best_model = model
             best_model_name = name
+            best_metrics = {
+                "accuracy": acc,
+                "precision": prec,
+                "recall": rec,
+                "f1": f1
+            }
 
     results_df = pd.DataFrame(results)
 
@@ -194,8 +190,14 @@ def modeling_page():
     st.dataframe(results_df, use_container_width=True)
 
     st.success(
-        f"Model Terbaik: **{best_model_name}** "
-        f"(F1-Score = {best_f1:.4f})"
+        f"""
+        **Model Terbaik: {best_model_name}**
+
+        - Accuracy  : **{best_metrics['accuracy']*100:.2f}%**
+        - Precision : **{best_metrics['precision']*100:.2f}%**
+        - Recall    : **{best_metrics['recall']*100:.2f}%**
+        - F1-Score  : **{best_metrics['f1']*100:.2f}%**
+        """
     )
 
     # =========================
@@ -213,8 +215,10 @@ def modeling_page():
 
     st.markdown("""
     **Penjelasan:**
-    - Nilai diagonal menunjukkan prediksi yang benar
-    - Nilai di luar diagonal menunjukkan kesalahan klasifikasi
+    - Baris → hasil prediksi model
+    - Kolom → kondisi aktual
+    - Diagonal → prediksi benar (TP & TN)
+    - Di luar diagonal → kesalahan prediksi (FP & FN)
     """)
 
     # =========================
@@ -226,4 +230,3 @@ def modeling_page():
         "Model terbaik telah disimpan dan "
         "akan digunakan pada menu **Prediction App**."
     )
-
