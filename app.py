@@ -53,11 +53,11 @@ st.info(
 # TAB NAVIGASI (ALUR ML)
 # ======================
 tabs = st.tabs([
-    "Upload Dataset",
+    "Pilih Dataset",
     "About Dataset",
     "Exploratory Data Analysis",
     "Machine Learning",
-    "Analisis Model",
+    "Tahapan Metode",
     "Prediction",
     "Contact"
 ])
@@ -85,4 +85,5 @@ with tabs[5]:
 
 with tabs[6]:
     contact_page()
+
 
