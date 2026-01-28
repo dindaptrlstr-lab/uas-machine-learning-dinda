@@ -8,17 +8,17 @@ def upload_page():
     # =========================
     # JUDUL HALAMAN
     # =========================
-    st.subheader("Pilih Dataset")
+    st.subheader("Pemilihan Dataset")
 
     st.write(
-        "Pilih dataset yang akan digunakan sebagai dasar "
+        "Silakan pilih dataset yang akan digunakan sebagai dasar "
         "analisis dan pemodelan **Machine Learning**."
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
 
     # =========================
-    # STYLE CARD (NETRAL, NYATU DENGAN BANNER)
+    # GAYA KARTU DATASET
     # =========================
     st.markdown("""
     <style>
@@ -49,17 +49,17 @@ def upload_page():
     # =========================
     datasets = {
         "water": {
-            "title": "Water Potability Dataset",
-            "desc": "Dataset kualitas air untuk menentukan kelayakan air minum.",
+            "judul": "Dataset Kelayakan Air Minum",
+            "deskripsi": "Dataset kualitas air untuk menentukan kelayakan air minum.",
             "target": "Potability",
-            "type": "Lingkungan",
+            "tipe": "Lingkungan",
             "file": "water_potability.csv"
         },
         "cardio": {
-            "title": "Cardiovascular Disease Dataset",
-            "desc": "Dataset klinis untuk prediksi risiko penyakit jantung.",
+            "judul": "Dataset Penyakit Kardiovaskular",
+            "deskripsi": "Dataset data klinis untuk prediksi risiko penyakit jantung.",
             "target": "cardio",
-            "type": "Kesehatan",
+            "tipe": "Kesehatan",
             "file": "cardio_train.csv"
         }
     }
@@ -67,50 +67,50 @@ def upload_page():
     col1, col2 = st.columns(2)
 
     # =========================
-    # CARD DATASET AIR
+    # KARTU DATASET LINGKUNGAN
     # =========================
     with col1:
         st.markdown(f"""
         <div class="dataset-card">
-            <div class="dataset-title">{datasets['water']['title']}</div>
-            <div class="dataset-desc">{datasets['water']['desc']}</div>
+            <div class="dataset-title">{datasets['water']['judul']}</div>
+            <div class="dataset-desc">{datasets['water']['deskripsi']}</div>
         </div>
         """, unsafe_allow_html=True)
 
         if st.button("Gunakan Dataset Lingkungan", key="water_btn"):
-            load_dataset(datasets["water"])
+            muat_dataset(datasets["water"])
 
     # =========================
-    # CARD DATASET KESEHATAN
+    # KARTU DATASET KESEHATAN
     # =========================
     with col2:
         st.markdown(f"""
         <div class="dataset-card">
-            <div class="dataset-title">{datasets['cardio']['title']}</div>
-            <div class="dataset-desc">{datasets['cardio']['desc']}</div>
+            <div class="dataset-title">{datasets['cardio']['judul']}</div>
+            <div class="dataset-desc">{datasets['cardio']['deskripsi']}</div>
         </div>
         """, unsafe_allow_html=True)
 
         if st.button("Gunakan Dataset Kesehatan", key="cardio_btn"):
-            load_dataset(datasets["cardio"])
+            muat_dataset(datasets["cardio"])
 
 
-def load_dataset(config):
+def muat_dataset(konfigurasi):
 
     # =========================
-    # CEK FILE
+    # PEMERIKSAAN FILE
     # =========================
-    if not os.path.exists(config["file"]):
-        st.error(f"File `{config['file']}` tidak ditemukan.")
+    if not os.path.exists(konfigurasi["file"]):
+        st.error(f"File `{konfigurasi['file']}` tidak ditemukan.")
         return
 
     # =========================
-    # LOAD DATA
+    # MEMUAT DATASET
     # =========================
-    df = pd.read_csv(config["file"], sep=None, engine="python")
+    df = pd.read_csv(konfigurasi["file"], sep=None, engine="python")
 
     # =========================
-    # RESET STATE LAMA
+    # RESET SESSION STATE LAMA
     # =========================
     for key in ["best_model", "scaler", "feature_columns"]:
         if key in st.session_state:
@@ -120,11 +120,14 @@ def load_dataset(config):
     # SIMPAN KE SESSION STATE
     # =========================
     st.session_state["df"] = df
-    st.session_state["dataset_name"] = config["file"]
-    st.session_state["target_col"] = config["target"]
-    st.session_state["dataset_type"] = config["type"]
+    st.session_state["dataset_name"] = konfigurasi["file"]
+    st.session_state["target_col"] = konfigurasi["target"]
+    st.session_state["dataset_type"] = konfigurasi["tipe"]
 
     # =========================
-    # FEEDBACK SAJA (BERSIH)
+    # UMPAN BALIK KE PENGGUNA
     # =========================
-    st.success(f"Dataset **{config['title']}** berhasil dimuat. Silakan lanjut ke menu berikutnya.")
+    st.success(
+        f"Dataset **{konfigurasi['judul']}** berhasil dimuat. "
+        "Silakan lanjut ke menu berikutnya."
+    )
