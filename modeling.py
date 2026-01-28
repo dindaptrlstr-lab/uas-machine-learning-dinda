@@ -1,3 +1,4 @@
+import streamlit as st
 import pandas as pd
 import numpy as np
 
@@ -225,3 +226,4 @@ def modeling_page():
         "Model terbaik telah disimpan dan "
         "akan digunakan pada menu **Prediction App**."
     )
+
