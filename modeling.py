@@ -19,7 +19,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
-
 from catboost import CatBoostClassifier
 
 
@@ -29,23 +28,23 @@ def modeling_page():
     # PENGAMAN DATASET
     # =========================
     if "df" not in st.session_state or "dataset_name" not in st.session_state:
-        st.warning("Silakan upload dataset terlebih dahulu melalui sidebar.")
+        st.warning("Silakan upload dataset terlebih dahulu melalui menu Upload Dataset.")
         return
 
     df = st.session_state["df"]
     dataset_name = st.session_state["dataset_name"]
 
     # =========================
-    # JUDUL & DESKRIPSI HALAMAN
+    # JUDUL & DESKRIPSI
     # =========================
     st.subheader("Machine Learning")
 
     st.markdown("""
-    Halaman ini digunakan untuk melakukan **pelatihan (training)**
-    dan **evaluasi model klasifikasi** menggunakan pipeline
+    Halaman ini digunakan untuk melakukan **pelatihan (training)** dan
+    **evaluasi model klasifikasi** menggunakan pipeline
     **Machine Learning end-to-end**.
 
-    Proses yang dilakukan meliputi:
+    Tahapan yang dilakukan:
     - Preprocessing data
     - Pembagian data latih dan data uji
     - Pelatihan beberapa algoritma klasifikasi
@@ -71,7 +70,6 @@ def modeling_page():
     st.write(f"**Dataset:** `{dataset_name}` ({dataset_type})")
     st.write(f"**Target Klasifikasi:** `{target_col}`")
 
-    # Simpan target & tipe dataset untuk halaman lain
     st.session_state["target_col"] = target_col
     st.session_state["dataset_type"] = dataset_type
 
@@ -84,7 +82,6 @@ def modeling_page():
 
     df_model = df.copy()
 
-    # Pastikan seluruh kolom numerik
     for col in df_model.columns:
         df_model[col] = pd.to_numeric(df_model[col], errors="coerce")
 
@@ -92,9 +89,8 @@ def modeling_page():
     df_model = df_model.dropna()
     after_rows = len(df_model)
 
-    st.info(f"Data dibersihkan: **{before_rows - after_rows}** baris dibuang karena missing value.")
+    st.info(f"Data dibersihkan: {before_rows - after_rows} baris dihapus karena missing value.")
 
-    # Pisahkan fitur & target
     X = df_model.drop(columns=[target_col])
     y = df_model[target_col]
 
@@ -116,7 +112,6 @@ def modeling_page():
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
 
-    # Simpan scaler & fitur untuk prediksi
     st.session_state["scaler"] = scaler
     st.session_state["feature_columns"] = X.columns.tolist()
 
@@ -126,14 +121,8 @@ def modeling_page():
     models = {
         "Logistic Regression": LogisticRegression(max_iter=1000),
         "Decision Tree": DecisionTreeClassifier(random_state=42),
-        "Random Forest": RandomForestClassifier(
-            n_estimators=100,
-            random_state=42
-        ),
-        "Support Vector Machine (SVM)": SVC(
-            probability=True,
-            random_state=42
-        ),
+        "Random Forest": RandomForestClassifier(n_estimators=100, random_state=42),
+        "Support Vector Machine (SVM)": SVC(probability=True, random_state=42),
         "CatBoost": CatBoostClassifier(
             iterations=200,
             learning_rate=0.1,
@@ -148,6 +137,7 @@ def modeling_page():
 
     best_model = None
     best_model_name = None
+    best_metrics = {}
     best_f1 = 0
 
     # =========================
@@ -157,7 +147,6 @@ def modeling_page():
 
     for name, model in models.items():
 
-        # Scaling hanya untuk model berbasis jarak / linear
         if name in ["Logistic Regression", "Support Vector Machine (SVM)"]:
             model.fit(X_train_scaled, y_train)
             y_pred = model.predict(X_test_scaled)
@@ -174,16 +163,22 @@ def modeling_page():
 
         results.append({
             "Algoritma": name,
-            "Accuracy (%)": round(acc * 100, 2),
-            "Precision (%)": round(prec * 100, 2),
-            "Recall (%)": round(rec * 100, 2),
-            "F1-Score (%)": round(f1 * 100, 2)
+            "Accuracy": round(acc * 100, 2),
+            "Precision": round(prec * 100, 2),
+            "Recall": round(rec * 100, 2),
+            "F1-Score": round(f1 * 100, 2)
         })
 
         if f1 > best_f1:
             best_f1 = f1
             best_model = model
             best_model_name = name
+            best_metrics = {
+                "accuracy": acc * 100,
+                "precision": prec * 100,
+                "recall": rec * 100,
+                "f1": f1 * 100
+            }
 
     results_df = pd.DataFrame(results)
 
@@ -194,8 +189,14 @@ def modeling_page():
     st.dataframe(results_df, use_container_width=True)
 
     st.success(
-        f"Model Terbaik: **{best_model_name}** "
-        f"(F1-Score = {best_f1:.4f})"
+        f"""
+        **Model Terbaik: {best_model_name}**
+
+        - Accuracy  : {best_metrics['accuracy']:.2f}
+        - Precision : {best_metrics['precision']:.2f}
+        - Recall    : {best_metrics['recall']:.2f}
+        - F1-Score  : {best_metrics['f1']:.2f}
+        """
     )
 
     # =========================
@@ -212,9 +213,11 @@ def modeling_page():
     st.dataframe(conf_matrices[selected_model])
 
     st.markdown("""
-    **Penjelasan:**
-    - Nilai diagonal menunjukkan prediksi yang benar
-    - Nilai di luar diagonal menunjukkan kesalahan klasifikasi
+    **Keterangan:**
+    - True Positive (TP): Prediksi positif & aktual positif
+    - True Negative (TN): Prediksi negatif & aktual negatif
+    - False Positive (FP): Prediksi positif tapi aktual negatif
+    - False Negative (FN): Prediksi negatif tapi aktual positif
     """)
 
     # =========================
@@ -223,6 +226,6 @@ def modeling_page():
     st.session_state["best_model"] = best_model
 
     st.info(
-        "Model terbaik telah disimpan dan "
-        "akan digunakan pada menu **Prediction App**."
+        "Model terbaik telah disimpan dan akan digunakan "
+        "pada menu **Prediction App**."
     )
