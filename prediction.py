@@ -11,12 +11,12 @@ def prediction_page():
     # =========================
     st.markdown("""
     Halaman ini digunakan untuk melakukan **prediksi data baru**
-    menggunakan **model terbaik** yang diperoleh dari proses pelatihan
-    pada menu **Machine Learning**.
+    menggunakan **model terbaik** hasil pelatihan pada menu
+    **Machine Learning**.
 
-    Data yang digunakan untuk prediksi **diinput secara manual**
-    dan **tidak berasal dari dataset pelatihan**, sehingga mencerminkan
-    proses **inferensi model**.
+    Data untuk prediksi **diinput secara manual** dan **bukan berasal
+    dari dataset pelatihan**, sehingga merepresentasikan proses
+    **inferensi model**.
     """)
     st.markdown("---")
 
@@ -45,7 +45,7 @@ def prediction_page():
     scaler = st.session_state.get("scaler")
 
     # =========================
-    # LABEL TARGET OTOMATIS
+    # LABEL HASIL PREDIKSI
     # =========================
     if dataset_name == "water_potability.csv":
         label_positif = "Layak Minum"
@@ -67,36 +67,40 @@ def prediction_page():
     st.markdown("---")
 
     # =========================
-    # INPUT DATA MANUAL
+    # INPUT DATA MANUAL (KE SAMPING)
     # =========================
     st.subheader("Input Data Manual")
 
     st.write(
-        "Masukkan nilai setiap fitur secara **manual** untuk melakukan "
-        "prediksi pada **data baru di luar dataset pelatihan**."
+        "Masukkan nilai setiap fitur secara **manual**. "
+        "Input disusun **ke samping** agar lebih ringkas dan mudah dibaca."
     )
 
     data_input = {}
 
-    for kolom in feature_columns:
+    # Buat kolom (3 input per baris)
+    cols = st.columns(3)
 
-        # Nilai awal menggunakan rata-rata agar memudahkan pengguna
-        if pd.api.types.is_numeric_dtype(df[kolom]):
-            nilai_awal = float(df[kolom].mean())
-        else:
-            nilai_awal = 0.0
+    for i, kolom in enumerate(feature_columns):
+        col = cols[i % 3]
 
-        data_input[kolom] = st.number_input(
-            label=f"Nilai {kolom}",
-            value=nilai_awal,
-            format="%.4f"
-        )
+        with col:
+            if pd.api.types.is_numeric_dtype(df[kolom]):
+                nilai_awal = float(df[kolom].mean())
+            else:
+                nilai_awal = 0.0
 
-    # Membentuk DataFrame (tanpa ditampilkan)
+            data_input[kolom] = st.number_input(
+                label=f"{kolom}",
+                value=nilai_awal,
+                format="%.2f"
+            )
+
+    # Bentuk DataFrame (tidak ditampilkan)
     input_df = pd.DataFrame([data_input])
 
     # =========================
-    # PRA-PROSES DATA (KONSISTEN)
+    # PRA-PROSES DATA
     # =========================
     if scaler is not None:
         input_diproses = scaler.transform(input_df)
@@ -104,13 +108,14 @@ def prediction_page():
         input_diproses = input_df.values
 
     # =========================
-    # JALANKAN PREDIKSI
+    # PREDIKSI
     # =========================
+    st.markdown("---")
+
     if st.button("🔍 Jalankan Prediksi"):
 
         hasil_prediksi = model.predict(input_diproses)[0]
 
-        st.markdown("---")
         st.subheader("Hasil Prediksi")
 
         if hasil_prediksi == 1:
@@ -120,18 +125,17 @@ def prediction_page():
 
         st.write(
             "Hasil prediksi diperoleh dari **model terbaik** "
-            "berdasarkan evaluasi **F1-Score** "
-            "pada tahap Machine Learning."
+            "berdasarkan evaluasi **F1-Score**."
         )
 
     # =========================
-    # CATATAN AKADEMIK
+    # CATATAN
     # =========================
     st.markdown("---")
     st.info(
         "Catatan:\n"
-        "- Data untuk prediksi diinput secara **manual**.\n"
+        "- Data prediksi diinput secara **manual**.\n"
         "- Prediksi merepresentasikan proses **inferensi model**.\n"
-        "- Hasil prediksi digunakan untuk **analisis dan pembelajaran**.\n"
-        "- Model tidak dimaksudkan sebagai alat diagnosis medis."
+        "- Hasil digunakan untuk **analisis dan pembelajaran**.\n"
+        "- Bukan alat diagnosis medis."
     )
