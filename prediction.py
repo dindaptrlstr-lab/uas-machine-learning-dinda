@@ -35,7 +35,7 @@ def prediction_page():
         return
 
     # =========================
-    # AMBIL OBJEK DARI SESSION
+    # AMBIL OBJEK SESSION
     # =========================
     model = st.session_state["best_model"]
     df = st.session_state["df"]
@@ -43,59 +43,24 @@ def prediction_page():
     feature_columns = st.session_state["feature_columns"]
     scaler = st.session_state.get("scaler")
 
-    # =========================
-    # HAPUS KOLOM ID (TIDAK DIPAKAI)
-    # =========================
+    # Hapus kolom ID
     feature_columns = [f for f in feature_columns if f.lower() != "id"]
 
     # =========================
     # LABEL HASIL PREDIKSI
     # =========================
-    if dataset_name == "water_potability.csv":
-        label_positif = "Layak Minum"
-        label_negatif = "Tidak Layak Minum"
-
-    elif dataset_name == "cardio_train.csv":
+    if dataset_name == "cardio_train.csv":
         label_positif = "Berisiko Penyakit Jantung"
         label_negatif = "Tidak Berisiko"
-
+    elif dataset_name == "water_potability.csv":
+        label_positif = "Layak Minum"
+        label_negatif = "Tidak Layak Minum"
     else:
         st.error("Dataset tidak dikenali.")
         return
 
-    st.write(
-        "Prediksi dilakukan menggunakan **model terbaik** "
-        "yang telah dilatih sebelumnya."
-    )
-
     st.markdown("---")
-
-    # =========================
-    # LABEL INPUT BAHASA INDONESIA
-    # =========================
-    label_indonesia = {
-        "age": "Usia (hari)",
-        "gender": "Jenis Kelamin (1 = Pria, 2 = Wanita)",
-        "height": "Tinggi Badan (cm)",
-        "weight": "Berat Badan (kg)",
-        "ap_hi": "Tekanan Darah Sistolik",
-        "ap_lo": "Tekanan Darah Diastolik",
-        "cholesterol": "Kadar Kolesterol",
-        "gluc": "Kadar Glukosa",
-        "smoke": "Kebiasaan Merokok (0 = Tidak, 1 = Ya)",
-        "alco": "Konsumsi Alkohol (0 = Tidak, 1 = Ya)",
-        "active": "Aktivitas Fisik (0 = Tidak, 1 = Ya)"
-    }
-
-    # =========================
-    # INPUT DATA MANUAL (KE SAMPING)
-    # =========================
     st.subheader("Input Data Manual")
-
-    st.write(
-        "Masukkan nilai setiap variabel berikut "
-        "untuk melakukan prediksi data baru."
-    )
 
     data_input = {}
     cols = st.columns(3)
@@ -104,15 +69,50 @@ def prediction_page():
         col = cols[i % 3]
 
         with col:
-            nilai_awal = float(df[kolom].mean())
+            # ====== INPUT KHUSUS (MENU YA/TIDAK) ======
+            if kolom == "smoke":
+                pilihan = st.selectbox(
+                    "Kebiasaan Merokok",
+                    ["Tidak", "Ya"]
+                )
+                data_input[kolom] = 1 if pilihan == "Ya" else 0
 
-            label_tampil = label_indonesia.get(kolom, kolom)
+            elif kolom == "alco":
+                pilihan = st.selectbox(
+                    "Konsumsi Alkohol",
+                    ["Tidak", "Ya"]
+                )
+                data_input[kolom] = 1 if pilihan == "Ya" else 0
 
-            data_input[kolom] = st.number_input(
-                label=label_tampil,
-                value=nilai_awal,
-                format="%.2f"
-            )
+            elif kolom == "active":
+                pilihan = st.selectbox(
+                    "Aktif Berolahraga",
+                    ["Tidak", "Ya"]
+                )
+                data_input[kolom] = 1 if pilihan == "Ya" else 0
+
+            # ====== INPUT NUMERIK BIASA ======
+            else:
+                nilai_awal = float(df[kolom].mean())
+
+                label_indonesia = {
+                    "age": "Usia (hari)",
+                    "gender": "Jenis Kelamin (1 = Pria, 2 = Wanita)",
+                    "height": "Tinggi Badan (cm)",
+                    "weight": "Berat Badan (kg)",
+                    "ap_hi": "Tekanan Darah Sistolik",
+                    "ap_lo": "Tekanan Darah Diastolik",
+                    "cholesterol": "Kadar Kolesterol",
+                    "gluc": "Kadar Glukosa"
+                }
+
+                label_tampil = label_indonesia.get(kolom, kolom)
+
+                data_input[kolom] = st.number_input(
+                    label=label_tampil,
+                    value=nilai_awal,
+                    format="%.2f"
+                )
 
     input_df = pd.DataFrame([data_input])
 
@@ -125,25 +125,18 @@ def prediction_page():
         input_diproses = input_df.values
 
     # =========================
-    # JALANKAN PREDIKSI
+    # PREDIKSI
     # =========================
     st.markdown("---")
-
     if st.button("🔍 Jalankan Prediksi"):
 
-        hasil_prediksi = model.predict(input_diproses)[0]
+        hasil = model.predict(input_diproses)[0]
 
         st.subheader("Hasil Prediksi")
-
-        if hasil_prediksi == 1:
+        if hasil == 1:
             st.success(f"✅ **{label_positif}**")
         else:
             st.error(f"❌ **{label_negatif}**")
-
-        st.write(
-            "Hasil prediksi diperoleh dari **model terbaik** "
-            "berdasarkan evaluasi **F1-Score**."
-        )
 
     # =========================
     # CATATAN
@@ -151,8 +144,8 @@ def prediction_page():
     st.markdown("---")
     st.info(
         "Catatan:\n"
-        "- Kolom **ID tidak digunakan** karena tidak berpengaruh terhadap prediksi.\n"
-        "- Data dimasukkan secara **manual**.\n"
-        "- Prediksi merepresentasikan proses **inferensi model**.\n"
-        "- Bukan alat diagnosis medis."
+        "- Kebiasaan merokok, konsumsi alkohol, dan aktivitas fisik "
+        "diinput dalam bentuk **Ya/Tidak**.\n"
+        "- Sistem secara otomatis mengonversi ke format numerik (0/1).\n"
+        "- Prediksi merupakan **inferensi model**, bukan diagnosis medis."
     )
