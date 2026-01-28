@@ -62,6 +62,8 @@ def prediction_page():
     st.markdown("---")
     st.subheader("Input Data Manual")
 
+    st.write("Masukkan data berikut untuk melakukan prediksi.")
+
     data_input = {}
     cols = st.columns(3)
 
@@ -69,35 +71,34 @@ def prediction_page():
         col = cols[i % 3]
 
         with col:
-            # ====== INPUT KHUSUS (MENU YA/TIDAK) ======
-            if kolom == "smoke":
+            # ====== JENIS KELAMIN ======
+            if kolom == "gender":
                 pilihan = st.selectbox(
-                    "Kebiasaan Merokok",
-                    ["Tidak", "Ya"]
+                    "Jenis Kelamin",
+                    ["Pria", "Wanita"]
                 )
+                # Mapping sesuai dataset cardio
+                data_input[kolom] = 2 if pilihan == "Pria" else 1
+
+            # ====== MENU YA / TIDAK ======
+            elif kolom == "smoke":
+                pilihan = st.selectbox("Kebiasaan Merokok", ["Tidak", "Ya"])
                 data_input[kolom] = 1 if pilihan == "Ya" else 0
 
             elif kolom == "alco":
-                pilihan = st.selectbox(
-                    "Konsumsi Alkohol",
-                    ["Tidak", "Ya"]
-                )
+                pilihan = st.selectbox("Konsumsi Alkohol", ["Tidak", "Ya"])
                 data_input[kolom] = 1 if pilihan == "Ya" else 0
 
             elif kolom == "active":
-                pilihan = st.selectbox(
-                    "Aktif Berolahraga",
-                    ["Tidak", "Ya"]
-                )
+                pilihan = st.selectbox("Aktif Berolahraga", ["Tidak", "Ya"])
                 data_input[kolom] = 1 if pilihan == "Ya" else 0
 
-            # ====== INPUT NUMERIK BIASA ======
+            # ====== INPUT NUMERIK ======
             else:
                 nilai_awal = float(df[kolom].mean())
 
                 label_indonesia = {
                     "age": "Usia (hari)",
-                    "gender": "Jenis Kelamin (1 = Pria, 2 = Wanita)",
                     "height": "Tinggi Badan (cm)",
                     "weight": "Berat Badan (kg)",
                     "ap_hi": "Tekanan Darah Sistolik",
@@ -144,8 +145,5 @@ def prediction_page():
     st.markdown("---")
     st.info(
         "Catatan:\n"
-        "- Kebiasaan merokok, konsumsi alkohol, dan aktivitas fisik "
-        "diinput dalam bentuk **Ya/Tidak**.\n"
-        "- Sistem secara otomatis mengonversi ke format numerik (0/1).\n"
-        "- Prediksi merupakan **inferensi model**, bukan diagnosis medis."
+       "- Hasil prediksi merupakan **inferensi model**, bukan diagnosis medis."
     )
