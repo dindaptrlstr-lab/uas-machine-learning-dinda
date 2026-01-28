@@ -11,7 +11,6 @@ from analysis_model import analysis_model_page
 from prediction import prediction_page
 from contact import contact_page
 
-
 # ======================
 # KONFIGURASI HALAMAN
 # ======================
@@ -85,5 +84,6 @@ with tabs[5]:
 
 with tabs[6]:
     contact_page()
+
 
 
