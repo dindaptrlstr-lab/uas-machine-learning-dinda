@@ -86,7 +86,7 @@ def upload_page():
         </div>
         """, unsafe_allow_html=True)
 
-        if st.button("Gunakan Dataset Air", key="water_btn"):
+        if st.button("Gunakan Dataset Lingkungan", key="water_btn"):
             load_dataset(datasets["water"])
 
     # =========================
