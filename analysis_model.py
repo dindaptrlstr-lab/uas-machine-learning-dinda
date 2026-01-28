@@ -34,12 +34,6 @@ def analysis_model_page():
     # =====================================================
     st.subheader("Analisis Model Klasifikasi (Detail Perhitungan)")
 
-    st.write(
-        f"Dataset: **{dataset_name}** ({dataset_type})  \n"
-        "Halaman ini menampilkan **mekanisme internal dan perhitungan inti** "
-        "dari setiap algoritma klasifikasi."
-    )
-
     st.markdown("""
     Halaman ini bersifat **edukatif**, bertujuan menjelaskan
     **alur kerja dan rumus matematis** dari algoritma Machine Learning.
@@ -274,3 +268,4 @@ def analysis_model_page():
         "tahapan dan rumus algoritma. "
         "Training dan evaluasi aktual dilakukan pada menu **Machine Learning**."
     )
+
