@@ -18,12 +18,12 @@ def upload_page():
     st.markdown("<br>", unsafe_allow_html=True)
 
     # =========================
-    # STYLE CARD (NETRAL, NYATU DENGAN BANNER)
+    # STYLE CARD (NETRAL, NYATU BANNER)
     # =========================
     st.markdown("""
     <style>
     .dataset-card {
-        background-color: #EEF4FB;
+        background-color: #EEF4FB;   /* sama dengan banner UAS */
         padding: 24px;
         border-radius: 16px;
         height: 100%;
@@ -38,8 +38,13 @@ def upload_page():
 
     .dataset-desc {
         font-size: 14px;
-        margin-bottom: 16px;
+        margin-bottom: 10px;
         color: #444444;
+    }
+
+    .dataset-meta {
+        font-size: 13px;
+        color: #555555;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -74,10 +79,14 @@ def upload_page():
         <div class="dataset-card">
             <div class="dataset-title">{datasets['water']['title']}</div>
             <div class="dataset-desc">{datasets['water']['desc']}</div>
+            <div class="dataset-meta">
+                Domain: {datasets['water']['type']}<br>
+                Target: <code>{datasets['water']['target']}</code>
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
-        if st.button("Gunakan Dataset Lingkungan", key="water_btn"):
+        if st.button("Gunakan Dataset Air", key="water_btn"):
             load_dataset(datasets["water"])
 
     # =========================
@@ -88,6 +97,10 @@ def upload_page():
         <div class="dataset-card">
             <div class="dataset-title">{datasets['cardio']['title']}</div>
             <div class="dataset-desc">{datasets['cardio']['desc']}</div>
+            <div class="dataset-meta">
+                Domain: {datasets['cardio']['type']}<br>
+                Target: <code>{datasets['cardio']['target']}</code>
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -125,6 +138,9 @@ def load_dataset(config):
     st.session_state["dataset_type"] = config["type"]
 
     # =========================
-    # FEEDBACK SAJA (BERSIH)
+    # FEEDBACK
     # =========================
-    st.success(f"Dataset **{config['title']}** berhasil dimuat. Silakan lanjut ke menu berikutnya.")
+    st.success(f"Dataset **{config['title']}** berhasil dimuat")
+
+    with st.expander("Lihat 5 baris pertama dataset"):
+        st.dataframe(df.head(), use_container_width=True)
