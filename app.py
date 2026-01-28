@@ -16,12 +16,12 @@ from contact import contact_page
 # KONFIGURASI HALAMAN
 # ======================
 st.set_page_config(
-    page_title="Machine Learning Classification Dashboard",
+    page_title="Dashboard Klasifikasi Machine Learning",
     layout="wide"
 )
 
 # ======================
-# HILANGKAN SIDEBAR TOTAL (CSS)
+# MENYEMBUNYIKAN SIDEBAR (CSS)
 # ======================
 st.markdown("""
 <style>
@@ -35,11 +35,11 @@ section[data-testid="stSidebar"] {
 # ======================
 # HEADER UTAMA
 # ======================
-st.title("Machine Learning Classification Dashboard")
+st.title("Dashboard Klasifikasi Machine Learning")
 
 st.caption(
     "Dashboard untuk analisis dan klasifikasi data kesehatan serta lingkungan "
-    "dengan pendekatan Machine Learning."
+    "menggunakan pendekatan Machine Learning."
 )
 
 st.markdown("---")
@@ -50,20 +50,20 @@ st.info(
 )
 
 # ======================
-# TAB NAVIGASI (ALUR ML)
+# TAB NAVIGASI (ALUR MACHINE LEARNING)
 # ======================
 tabs = st.tabs([
-    "Pilih Dataset",
-    "About Dataset",
-    "Exploratory Data Analysis",
-    "Machine Learning",
+    "Pemilihan Dataset",
+    "Informasi Dataset",
+    "Eksplorasi Data (EDA)",
+    "Pemodelan Machine Learning",
     "Tahapan Metode",
-    "Prediction",
-    "Contact"
+    "Prediksi",
+    "Kontak"
 ])
 
 # ======================
-# ISI TAB
+# ISI MASING-MASING TAB
 # ======================
 with tabs[0]:
     upload_page()
@@ -85,5 +85,3 @@ with tabs[5]:
 
 with tabs[6]:
     contact_page()
-
-
