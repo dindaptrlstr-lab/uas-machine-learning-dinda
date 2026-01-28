@@ -43,6 +43,13 @@ def modeling_page():
     Halaman ini menampilkan proses **pemodelan dan evaluasi**
     beberapa algoritma klasifikasi menggunakan pendekatan
     **Machine Learning**.
+
+    **Proses yang dilakukan meliputi:**
+    - Preprocessing data
+    - Pembagian data latih dan data uji
+    - Pelatihan beberapa algoritma klasifikasi
+    - Evaluasi performa model
+    - Pemilihan model terbaik
     """)
 
     st.markdown("---")
@@ -91,7 +98,7 @@ def modeling_page():
     y = df_model[target_col]
 
     # =========================
-    # PEMBAGIAN DATA
+    # PEMBAGIAN DATA LATIH & UJI
     # =========================
     X_train, X_test, y_train, y_test = train_test_split(
         X,
@@ -170,7 +177,7 @@ def modeling_page():
     hasil_df = pd.DataFrame(results)
 
     # =========================
-    # HASIL EVALUASI
+    # HASIL EVALUASI MODEL
     # =========================
     st.subheader("Hasil Evaluasi Model")
     st.dataframe(hasil_df, use_container_width=True)
@@ -180,7 +187,7 @@ def modeling_page():
         **Model Terbaik: {nama_model_terbaik}**
 
         Model ini dipilih karena memiliki nilai **F1-Score tertinggi**
-        dibandingkan model lainnya.
+        dibandingkan model klasifikasi lainnya.
         """
     )
 
