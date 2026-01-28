@@ -1,4 +1,4 @@
-import streamlit as st 
+import streamlit as st
 import pandas as pd
 import numpy as np
 from scipy.special import expit  # sigmoid stabil numerik
@@ -41,9 +41,10 @@ def analysis_model_page():
     )
 
     st.markdown("""
-    Halaman ini dirancang untuk **tujuan edukatif**,
-    yaitu menjelaskan **cara kerja algoritma Machine Learning**
-    secara **konseptual dan matematis**.
+    Halaman ini bersifat **edukatif**, bertujuan menjelaskan
+    **alur kerja dan rumus matematis** dari algoritma Machine Learning.
+    Nilai numerik yang ditampilkan merupakan **simulasi sederhana**,
+    bukan hasil training aktual.
     """)
 
     st.markdown("---")
@@ -85,19 +86,25 @@ def analysis_model_page():
 
         st.markdown("""
         **Tahapan Logistic Regression:**
-        1. Menghitung kombinasi linear fitur  
-           \\[
-           z = \\beta_0 + \\beta_1x_1 + \\beta_2x_2 + ... + \\beta_nx_n
-           \\]
-        2. Mengubah nilai `z` menjadi probabilitas menggunakan fungsi sigmoid  
-           \\[
-           P(y=1) = \\frac{1}{1 + e^{-z}}
-           \\]
-        3. Menentukan kelas berdasarkan threshold (0.5)
-        4. Menghitung kesalahan prediksi menggunakan Log Loss  
-           \\[
-           L = -[y \\log(p) + (1-y) \\log(1-p)]
-           \\]
+
+        1. **Menyusun model linear**
+        \[
+        z = \\beta_0 + \\beta_1x_1 + \\beta_2x_2 + \\dots + \\beta_nx_n
+        \]
+
+        2. **Transformasi sigmoid**
+        \[
+        P(y=1) = \\frac{1}{1 + e^{-z}}
+        \]
+
+        3. **Penentuan kelas**
+        - Jika \(P(y=1) \\ge 0.5\) → kelas 1  
+        - Jika \(P(y=1) < 0.5\) → kelas 0
+
+        4. **Log Loss**
+        \[
+        L = -[y\\log(p) + (1-y)\\log(1-p)]
+        \]
         """)
 
         beta = np.ones(len(X_sample)) * 0.1
@@ -108,11 +115,11 @@ def analysis_model_page():
         kelas = 1 if prob >= 0.5 else 0
         log_loss = -(np.log(prob) if kelas == 1 else np.log(1 - prob))
 
-        st.write("**Model:**  z = β₀ + β·x")
-        st.write(f"Nilai z = `{z:.4f}`")
-        st.write(f"Sigmoid(z) = `{prob:.4f}`")
+        st.write("**Model:** z = β₀ + β·x")
+        st.write(f"Nilai z = `{z}`")
+        st.write(f"Sigmoid(z) = `{prob}`")
         st.write(f"Prediksi Kelas = `{kelas}`")
-        st.write(f"Log Loss (1 data) = `{log_loss:.4f}`")
+        st.write(f"Log Loss (1 data) = `{log_loss}`")
 
     # =====================================================
     # DECISION TREE
@@ -122,16 +129,21 @@ def analysis_model_page():
 
         st.markdown("""
         **Tahapan Decision Tree:**
-        1. Menghitung Entropy awal dataset  
-           \\[
-           Entropy = -\\sum p_i \\log_2(p_i)
-           \\]
-        2. Memilih fitur dan threshold sebagai pemisah
-        3. Menghitung Information Gain  
-           \\[
-           IG = Entropy_{awal} - Entropy_{setelah\\ split}
-           \\]
-        4. Membentuk cabang hingga kondisi berhenti
+
+        1. **Menghitung Entropy**
+        \[
+        H(S) = -\\sum p_i \\log_2(p_i)
+        \]
+
+        2. **Menguji pemisahan fitur**
+        Data dibagi berdasarkan threshold tertentu.
+
+        3. **Information Gain**
+        \[
+        IG = H(S) - \\sum \\frac{|S_v|}{|S|}H(S_v)
+        \]
+
+        Fitur dengan **Information Gain terbesar** dipilih sebagai node.
         """)
 
         class_prob = df[target_col].value_counts(normalize=True)
@@ -152,9 +164,10 @@ def analysis_model_page():
             (len(right) / len(df)) * entropy_subset(right)
         )
 
-        st.write(f"Entropy Awal = `{entropy:.4f}`")
-        st.write(f"Fitur Contoh = `{feature}`")
-        st.write(f"Information Gain = `{information_gain:.4f}`")
+        st.write(f"Entropy Awal = `{entropy}`")
+        st.write(f"Fitur = `{feature}`")
+        st.write(f"Threshold = `{threshold}`")
+        st.write(f"Information Gain = `{information_gain}`")
 
     # =====================================================
     # RANDOM FOREST
@@ -164,21 +177,27 @@ def analysis_model_page():
 
         st.markdown("""
         **Tahapan Random Forest:**
-        1. Melakukan bootstrap sampling dari dataset
-        2. Membangun banyak Decision Tree
-        3. Setiap tree dilatih dengan subset fitur acak
-        4. Prediksi akhir ditentukan dengan majority voting
+
+        1. **Bootstrap Sampling**
+        Data diambil secara acak dengan pengembalian.
+
+        2. **Pembuatan banyak Decision Tree**
+        Setiap tree menggunakan subset data & fitur.
+
+        3. **Voting Mayoritas**
+        Hasil prediksi ditentukan berdasarkan suara terbanyak:
+        \[
+        y = \\text{mode}(y_1, y_2, \\dots, y_n)
+        \]
         """)
 
-        fake_tree_predictions = np.random.choice(
-            df[target_col].unique(), size=7
-        )
-
+        n = len(df)
+        bootstrap_idx = np.random.choice(df.index, size=n, replace=True)
+        fake_tree_predictions = np.random.choice(df[target_col].unique(), size=7)
         vote_result = pd.Series(fake_tree_predictions).value_counts()
 
-        st.write("Prediksi dari tiap tree:")
-        st.write(fake_tree_predictions)
-        st.success(f"Hasil Voting Mayoritas = `{vote_result.idxmax()}`")
+        st.write("Contoh prediksi tree:", fake_tree_predictions)
+        st.write("Hasil voting:", vote_result.idxmax())
 
     # =====================================================
     # SUPPORT VECTOR MACHINE
@@ -188,12 +207,18 @@ def analysis_model_page():
 
         st.markdown("""
         **Tahapan SVM:**
-        1. Menentukan hyperplane pemisah  
-           \\[
-           f(x) = w \\cdot x + b
-           \\]
-        2. Memaksimalkan margin antar kelas
-        3. Kelas ditentukan berdasarkan tanda fungsi keputusan
+
+        1. **Mencari hyperplane optimal**
+        \[
+        f(x) = w \\cdot x + b
+        \]
+
+        2. **Margin maksimum**
+        Hyperplane dipilih agar jarak ke data terdekat maksimum.
+
+        3. **Klasifikasi**
+        - Jika \(f(x) \\ge 0\) → kelas 1  
+        - Jika \(f(x) < 0\) → kelas 0
         """)
 
         w = np.ones(len(X_sample)) * 0.5
@@ -202,8 +227,8 @@ def analysis_model_page():
         decision_value = np.dot(w, X_sample) + b
         kelas = 1 if decision_value >= 0 else 0
 
-        st.write(f"f(x) = `{decision_value:.4f}`")
-        st.success(f"Prediksi Kelas = `{kelas}`")
+        st.write(f"f(x) = `{decision_value}`")
+        st.write(f"Prediksi Kelas = `{kelas}`")
 
     # =====================================================
     # CATBOOST
@@ -212,30 +237,40 @@ def analysis_model_page():
         st.subheader("CatBoost")
 
         st.markdown("""
-        **Tahapan CatBoost:**
-        1. Membuat prediksi awal
-        2. Menghitung error (residual)
-        3. Membangun tree baru untuk memperbaiki error
-        4. Memperbarui prediksi  
-           \\[
-           F_{baru} = F_{lama} + \\eta \\times error
-           \\]
+        **Tahapan CatBoost (Gradient Boosting):**
+
+        1. **Prediksi awal**
+        \[
+        F_0(x)
+        \]
+
+        2. **Hitung error**
+        \[
+        error = y - \\hat{y}
+        \]
+
+        3. **Update model**
+        \[
+        F_m(x) = F_{m-1}(x) + \\eta \\cdot error
+        \]
+
+        Proses dilakukan berulang hingga konvergen.
         """)
 
         initial_prediction = 0.5
         learning_rate = 0.1
         error_correction = -0.2
-
         updated_prediction = initial_prediction + learning_rate * error_correction
 
-        st.write(f"Prediksi Awal = `{initial_prediction}`")
-        st.write(f"Prediksi Baru = `{updated_prediction:.4f}`")
+        st.write(f"Prediksi awal = `{initial_prediction}`")
+        st.write(f"Prediksi baru = `{updated_prediction}`")
 
     # =====================================================
     # CATATAN PENUTUP
     # =====================================================
     st.markdown("---")
     st.info(
-        "Penjelasan tahapan dan rumus di atas digunakan untuk **memahami konsep algoritma**. "
-        "Training dan evaluasi model secara nyata dilakukan pada menu **Machine Learning**."
+        "Bagian ini bersifat **edukatif** untuk menjelaskan "
+        "tahapan dan rumus algoritma. "
+        "Training dan evaluasi aktual dilakukan pada menu **Machine Learning**."
     )
