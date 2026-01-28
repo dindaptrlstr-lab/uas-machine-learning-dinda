@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 # =========================
-# PUSTAKA SCIKIT-LEARN
+# SKLEARN
 # =========================
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -28,31 +28,21 @@ def modeling_page():
     # PENGAMAN DATASET
     # =========================
     if "df" not in st.session_state or "dataset_name" not in st.session_state:
-        st.warning(
-            "Silakan unggah dataset terlebih dahulu "
-            "melalui menu Pemilihan Dataset."
-        )
+        st.warning("Silakan unggah dataset terlebih dahulu melalui menu Pemilihan Dataset.")
         return
 
     df = st.session_state["df"]
     dataset_name = st.session_state["dataset_name"]
 
     # =========================
-    # JUDUL & DESKRIPSI HALAMAN
+    # DESKRIPSI HALAMAN
     # =========================
     st.subheader("Pemodelan Machine Learning")
 
     st.markdown("""
-    Halaman ini digunakan untuk melakukan **pelatihan (training)** dan
-    **evaluasi model klasifikasi** menggunakan alur
-    **Machine Learning end-to-end**.
-
-    Tahapan yang dilakukan meliputi:
-    - Pra-pemrosesan data
-    - Pembagian data latih dan data uji
-    - Pelatihan beberapa algoritma klasifikasi
-    - Evaluasi kinerja model
-    - Pemilihan model terbaik
+    Halaman ini menampilkan proses **pemodelan dan evaluasi**
+    beberapa algoritma klasifikasi menggunakan pendekatan
+    **Machine Learning**.
     """)
 
     st.markdown("---")
@@ -94,15 +84,14 @@ def modeling_page():
 
     st.info(
         f"Pembersihan data selesai: "
-        f"{jumlah_awal - jumlah_akhir} baris dihapus "
-        f"karena mengandung nilai hilang."
+        f"{jumlah_awal - jumlah_akhir} baris dihapus karena nilai hilang."
     )
 
     X = df_model.drop(columns=[target_col])
     y = df_model[target_col]
 
     # =========================
-    # PEMBAGIAN DATA LATIH & UJI
+    # PEMBAGIAN DATA
     # =========================
     X_train, X_test, y_train, y_test = train_test_split(
         X,
@@ -128,12 +117,8 @@ def modeling_page():
     models = {
         "Logistic Regression": LogisticRegression(max_iter=1000),
         "Decision Tree": DecisionTreeClassifier(random_state=42),
-        "Random Forest": RandomForestClassifier(
-            n_estimators=100, random_state=42
-        ),
-        "Support Vector Machine (SVM)": SVC(
-            probability=True, random_state=42
-        ),
+        "Random Forest": RandomForestClassifier(n_estimators=100, random_state=42),
+        "Support Vector Machine (SVM)": SVC(probability=True, random_state=42),
         "CatBoost": CatBoostClassifier(
             iterations=200,
             learning_rate=0.1,
@@ -148,14 +133,11 @@ def modeling_page():
 
     model_terbaik = None
     nama_model_terbaik = None
-    metrik_terbaik = {}
     nilai_f1_terbaik = 0
 
     # =========================
-    # PELATIHAN & EVALUASI MODEL
+    # EVALUASI MODEL
     # =========================
-    st.subheader("Pelatihan dan Evaluasi Model")
-
     for nama, model in models.items():
 
         if nama in ["Logistic Regression", "Support Vector Machine (SVM)"]:
@@ -174,27 +156,21 @@ def modeling_page():
 
         results.append({
             "Algoritma": nama,
-            "Akurasi (%)": round(acc * 100, 2),
-            "Presisi (%)": round(prec * 100, 2),
-            "Recall (%)": round(rec * 100, 2),
-            "F1-Score (%)": round(f1 * 100, 2)
+            "Akurasi": round(acc, 4),
+            "Presisi": round(prec, 4),
+            "Recall": round(rec, 4),
+            "F1-Score": round(f1, 4)
         })
 
         if f1 > nilai_f1_terbaik:
             nilai_f1_terbaik = f1
             model_terbaik = model
             nama_model_terbaik = nama
-            metrik_terbaik = {
-                "akurasi": acc * 100,
-                "presisi": prec * 100,
-                "recall": rec * 100,
-                "f1": f1 * 100
-            }
 
     hasil_df = pd.DataFrame(results)
 
     # =========================
-    # HASIL EVALUASI MODEL
+    # HASIL EVALUASI
     # =========================
     st.subheader("Hasil Evaluasi Model")
     st.dataframe(hasil_df, use_container_width=True)
@@ -203,10 +179,8 @@ def modeling_page():
         f"""
         **Model Terbaik: {nama_model_terbaik}**
 
-        - Akurasi   : {metrik_terbaik['akurasi']:.2f}%
-        - Presisi   : {metrik_terbaik['presisi']:.2f}%
-        - Recall    : {metrik_terbaik['recall']:.2f}%
-        - F1-Score  : {metrik_terbaik['f1']:.2f}%
+        Model ini dipilih karena memiliki nilai **F1-Score tertinggi**
+        dibandingkan model lainnya.
         """
     )
 
@@ -238,39 +212,15 @@ def modeling_page():
         ]
     )
 
-    st.write(f"Confusion Matrix — **{selected_model}**")
     st.dataframe(cm_labeled, use_container_width=True)
 
     # =========================
-    # PENJELASAN CONFUSION MATRIX
-    # =========================
-    st.markdown("### Penjelasan Confusion Matrix")
-
-    st.markdown(f"""
-    - **True Positive (TP)** = {tp}  
-      Model memprediksi positif dan data memang positif.
-
-    - **False Positive (FP)** = {fp}  
-      Model memprediksi positif, tetapi data sebenarnya negatif.
-
-    - **False Negative (FN)** = {fn}  
-      Model memprediksi negatif, tetapi data sebenarnya positif.
-
-    - **True Negative (TN)** = {tn}  
-      Model memprediksi negatif dan data memang negatif.
-    """)
-
-    st.info(
-        "Baris menunjukkan **hasil prediksi model**, "
-        "sedangkan kolom menunjukkan **kondisi aktual data**."
-    )
-
-    # =========================
-    # PENYIMPANAN MODEL TERBAIK
+    # SIMPAN MODEL TERBAIK
     # =========================
     st.session_state["best_model"] = model_terbaik
+    st.session_state["best_model_name"] = nama_model_terbaik
 
     st.info(
         "Model terbaik telah disimpan dan akan digunakan "
-        "pada menu **Prediksi**."
+        "pada halaman **Prediksi**."
     )
