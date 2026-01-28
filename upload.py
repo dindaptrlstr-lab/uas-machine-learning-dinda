@@ -38,14 +38,14 @@ def upload_page():
 
     .dataset-desc {
         font-size: 14px;
-        margin-bottom: 14px;
+        margin-bottom: 16px;
         color: #444444;
     }
     </style>
     """, unsafe_allow_html=True)
 
     # =========================
-    # KONFIGURASI DATASET (LOGIKA)
+    # KONFIGURASI DATASET
     # =========================
     datasets = {
         "water": {
@@ -118,7 +118,6 @@ def load_dataset(config):
 
     # =========================
     # SIMPAN KE SESSION STATE
-    # (LOGIKA ML TETAP UTUH)
     # =========================
     st.session_state["df"] = df
     st.session_state["dataset_name"] = config["file"]
@@ -126,9 +125,6 @@ def load_dataset(config):
     st.session_state["dataset_type"] = config["type"]
 
     # =========================
-    # FEEDBACK
+    # FEEDBACK SAJA (BERSIH)
     # =========================
-    st.success(f"Dataset **{config['title']}** berhasil dimuat")
-
-    with st.expander("Lihat 5 baris pertama dataset"):
-        st.dataframe(df.head(), use_container_width=True)
+    st.success(f"Dataset **{config['title']}** berhasil dimuat. Silakan lanjut ke menu berikutnya.")
