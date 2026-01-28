@@ -98,14 +98,15 @@ def prediction_page():
                 nilai_awal = float(df[kolom].mean())
 
                 label_indonesia = {
-                    "age": "Usia (hari)",
-                    "height": "Tinggi Badan (cm)",
-                    "weight": "Berat Badan (kg)",
-                    "ap_hi": "Tekanan Darah Sistolik",
-                    "ap_lo": "Tekanan Darah Diastolik",
-                    "cholesterol": "Kadar Kolesterol",
-                    "gluc": "Kadar Glukosa"
-                }
+    "age": "Usia",
+    "height": "Tinggi Badan (cm)",
+    "weight": "Berat Badan (kg)",
+    "ap_hi": "Tekanan Darah Sistolik",
+    "ap_lo": "Tekanan Darah Diastolik",
+    "cholesterol": "Kadar Kolesterol",
+    "gluc": "Kadar Glukosa"
+}
+
 
                 label_tampil = label_indonesia.get(kolom, kolom)
 
@@ -147,3 +148,4 @@ def prediction_page():
         "Catatan:\n"
        "- Hasil prediksi merupakan **inferensi model**, bukan diagnosis medis."
     )
+
