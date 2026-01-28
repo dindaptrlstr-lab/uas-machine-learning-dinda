@@ -61,9 +61,11 @@ def prediction_page():
 
     st.markdown("---")
     st.subheader("Input Data Manual")
-
     st.write("Masukkan data berikut untuk melakukan prediksi.")
 
+    # =========================
+    # INPUT DATA (KE SAMPING)
+    # =========================
     data_input = {}
     cols = st.columns(3)
 
@@ -71,7 +73,7 @@ def prediction_page():
         col = cols[i % 3]
 
         with col:
-            # ====== JENIS KELAMIN ======
+            # ===== JENIS KELAMIN =====
             if kolom == "gender":
                 pilihan = st.selectbox(
                     "Jenis Kelamin",
@@ -80,7 +82,7 @@ def prediction_page():
                 # Mapping sesuai dataset cardio
                 data_input[kolom] = 2 if pilihan == "Pria" else 1
 
-            # ====== MENU YA / TIDAK ======
+            # ===== PERILAKU (YA / TIDAK) =====
             elif kolom == "smoke":
                 pilihan = st.selectbox("Kebiasaan Merokok", ["Tidak", "Ya"])
                 data_input[kolom] = 1 if pilihan == "Ya" else 0
@@ -93,20 +95,19 @@ def prediction_page():
                 pilihan = st.selectbox("Aktif Berolahraga", ["Tidak", "Ya"])
                 data_input[kolom] = 1 if pilihan == "Ya" else 0
 
-            # ====== INPUT NUMERIK ======
+            # ===== NUMERIK =====
             else:
                 nilai_awal = float(df[kolom].mean())
 
                 label_indonesia = {
-    "age": "Usia",
-    "height": "Tinggi Badan (cm)",
-    "weight": "Berat Badan (kg)",
-    "ap_hi": "Tekanan Darah Sistolik",
-    "ap_lo": "Tekanan Darah Diastolik",
-    "cholesterol": "Kadar Kolesterol",
-    "gluc": "Kadar Glukosa"
-}
-
+                    "age": "Usia",
+                    "height": "Tinggi Badan (cm)",
+                    "weight": "Berat Badan (kg)",
+                    "ap_hi": "Tekanan Darah Sistolik",
+                    "ap_lo": "Tekanan Darah Diastolik",
+                    "cholesterol": "Kadar Kolesterol",
+                    "gluc": "Kadar Glukosa"
+                }
 
                 label_tampil = label_indonesia.get(kolom, kolom)
 
@@ -146,6 +147,5 @@ def prediction_page():
     st.markdown("---")
     st.info(
         "Catatan:\n"
-       "- Hasil prediksi merupakan **inferensi model**, bukan diagnosis medis."
+     "- Hasil prediksi merupakan **inferensi model**, bukan diagnosis medis."
     )
-
