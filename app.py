@@ -11,6 +11,7 @@ from analysis_model import analysis_model_page
 from prediction import prediction_page
 from contact import contact_page
 
+
 # ======================
 # KONFIGURASI HALAMAN
 # ======================
@@ -52,11 +53,11 @@ st.info(
 # TAB NAVIGASI (ALUR ML)
 # ======================
 tabs = st.tabs([
-    "Pilih Dataset",
+    "Upload Dataset",
     "About Dataset",
     "Exploratory Data Analysis",
     "Machine Learning",
-    "Tahapan Metode",
+    "Analisis Model",
     "Prediction",
     "Contact"
 ])
@@ -84,6 +85,4 @@ with tabs[5]:
 
 with tabs[6]:
     contact_page()
-
-
 
