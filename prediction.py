@@ -4,7 +4,7 @@ import numpy as np
 
 
 def prediction_page():
-    st.subheader("Aplikasi Prediksi")
+    st.subheader("Aplikasi Prediksi Kelayakan Air Minum dan Risiko Penyakit Jantung")
 
     # =========================
     # DESKRIPSI HALAMAN
@@ -17,7 +17,6 @@ def prediction_page():
     Data dimasukkan secara **manual**, tidak berasal dari dataset pelatihan,
     sehingga mencerminkan proses **inferensi model**.
     """)
-    st.markdown("---")
 
     # =========================
     # PENGAMAN PIPELINE
@@ -60,7 +59,7 @@ def prediction_page():
         return
 
     st.markdown("---")
-    st.subheader("Input Data Manual")
+    st.subheader("Input Data")
     st.write("Masukkan data berikut untuk melakukan prediksi.")
 
     # =========================
@@ -149,3 +148,4 @@ def prediction_page():
         "Catatan:\n"
      "- Hasil prediksi merupakan **inferensi model**, bukan diagnosis medis."
     )
+
