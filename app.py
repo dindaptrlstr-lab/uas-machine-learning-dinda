@@ -52,26 +52,29 @@ div[data-testid="stTabs"] button[role="tab"] {
 
 
 # ======================
-# HEADER UTAMA (CENTER) – DENGAN BACKGROUND
+# HEADER UTAMA (CENTER)
 # ======================
 st.markdown("""
-<div style="
-    text-align:center;
-    padding:25px;
-    margin:20px auto;
-    width:70%;
-    background-color:#F2F6FB;
-    border-radius:16px;
-">
-    <h1 style="margin-bottom:10px;">
-        Machine Learning Classification Dashboard
-    </h1>
-    <p style="font-size:16px; margin:0;">
-        Dashboard untuk analisis dan klasifikasi data kesehatan serta lingkungan
-        dengan pendekatan <b>Machine Learning</b>
-    </p>
+<div style="text-align:center; padding-top:15px;">
+    <h1>Machine Learning Classification Dashboard</h1>
+
+    <div style="
+        margin:15px auto;
+        width:70%;
+        background-color:#F2F6FB;
+        padding:18px;
+        border-radius:16px;
+    ">
+        <p style="font-size:16px; margin:0;">
+            Dashboard untuk analisis dan klasifikasi data kesehatan serta lingkungan
+            dengan pendekatan <b>Machine Learning</b>
+        </p>
+    </div>
+
+    <hr style="width:60%; margin:auto;">
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
@@ -112,4 +115,5 @@ with tabs[5]:
 
 with tabs[6]:
     contact_page()
+
 
