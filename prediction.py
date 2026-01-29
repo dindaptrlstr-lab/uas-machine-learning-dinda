@@ -186,8 +186,6 @@ def prediction_page():
     st.markdown("---")
     st.info(
         "Catatan:\n"
-        "- Data dimasukkan secara manual oleh pengguna.\n"
-        "- Nilai input dikonversi ke format numerik sesuai dataset.\n"
         "- Sistem ini digunakan untuk **pembelajaran dan analisis data**, "
         "bukan sebagai diagnosis medis."
     )
