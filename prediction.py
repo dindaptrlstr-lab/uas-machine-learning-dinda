@@ -4,7 +4,7 @@ import numpy as np
 
 
 def prediction_page():
-    st.subheader("Sistem Prediksi Berbasis Machine Learning")
+    st.subheader("Sistem Prediksi Kelayakan Air Minum dan Risiko Penyakit Jantung")
     st.markdown("---")
 
     # =========================
@@ -148,3 +148,4 @@ def prediction_page():
         "- Sistem ini digunakan untuk **pembelajaran Machine Learning**.\n"
         "- Hasil prediksi **bukan diagnosis atau uji laboratorium**."
     )
+
