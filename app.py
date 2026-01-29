@@ -46,12 +46,12 @@ st.info(
 # ======================
 tabs = st.tabs([
     "Pilih Dataset",
-    "About Dataset",
-    "Exploratory Data Analysis",
+    "Tentang Dataset",
+    "Eksplorasi Data",
     "Machine Learning",
-    "Tahapan Model",
-    "Prediction",
-    "Contact"
+    "Tahapan Pemodelan",
+    "Prediksi",
+    "Kontak"
 ])
 
 # ======================
@@ -77,6 +77,7 @@ with tabs[5]:
 
 with tabs[6]:
     contact_page()
+
 
 
 
