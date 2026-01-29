@@ -67,12 +67,14 @@ st.markdown("""
         margin:12px 0;
         font-size:16px;
         width:100%;
+        text-align:center;
     ">
         Dashboard untuk analisis dan klasifikasi data kesehatan serta lingkungan
         dengan pendekatan <b>Machine Learning</b>
     </div>
 
     <hr style="width:60%; margin:20px auto;">
+
 </div>
 """, unsafe_allow_html=True)
 
