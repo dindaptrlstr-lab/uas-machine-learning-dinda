@@ -110,8 +110,8 @@ def show_about():
     **Machine Learning untuk klasifikasi**, yaitu:
 
     - **Logistic Regression**  
-    - **Decision Tree Classifier**  
-    - **Random Forest Classifier**  
+    - **Decision Tree**  
+    - **Random Forest**  
     - **Support Vector Machine (SVM)**  
     - **CatBoost**
 
@@ -135,5 +135,6 @@ def show_about():
         "- Target variabel ditentukan secara otomatis atau pada menu Machine Learning.\n"
         "- Hasil evaluasi model ditampilkan pada menu Machine Learning."
     )
+
 
 
