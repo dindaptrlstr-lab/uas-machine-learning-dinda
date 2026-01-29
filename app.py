@@ -22,7 +22,7 @@ st.set_page_config(
 
 
 # ======================
-# HILANGKAN SIDEBAR TOTAL (CSS)
+# HILANGKAN SIDEBAR TOTAL
 # ======================
 st.markdown("""
 <style>
@@ -37,30 +37,39 @@ section[data-testid="stSidebar"] {
 # HEADER UTAMA (CENTER)
 # ======================
 st.markdown("""
-<div style="text-align: center; padding-top: 10px;">
+<div style="text-align:center; padding-top:15px;">
     <h1>Machine Learning Classification Dashboard</h1>
     <p style="font-size:18px;">
         Dashboard untuk analisis dan klasifikasi data kesehatan serta lingkungan<br>
-        dengan pendekatan <b>Machine Learning</b>.
+        dengan pendekatan <b>Machine Learning</b>
     </p>
     <hr style="width:60%; margin:auto;">
     <div style="
+        margin-top:12px;
+        padding:10px 20px;
         background-color:#eef6ff;
-        padding:12px;
         border-radius:8px;
         display:inline-block;
-        margin-top:10px;
         font-size:16px;
     ">
-        <b>Proyek Akhir UAS</b> – Mata Kuliah Machine Learning<br>
-        Program Studi Sains Data
+        <b>Proyek Akhir UAS</b> – Mata Kuliah Machine Learning | Program Studi Sains Data
     </div>
 </div>
 """, unsafe_allow_html=True)
 
 
 # ======================
-# TAB NAVIGASI (ALUR ML)
+# JUDUL NAVIGASI (CENTER)
+# ======================
+st.markdown("""
+<h3 style="text-align:center; margin-top:30px;">
+    Navigasi Dashboard
+</h3>
+""", unsafe_allow_html=True)
+
+
+# ======================
+# TAB NAVIGASI
 # ======================
 tabs = st.tabs([
     "Pilih Dataset",
