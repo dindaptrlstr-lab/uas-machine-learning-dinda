@@ -46,22 +46,11 @@ st.markdown("""
     <div style="
         margin-top:12px;
         padding:10px 20px;
-        background-color:#eef6ff;
         border-radius:8px;
         display:inline-block;
         font-size:16px;
     ">
 </div>
-""", unsafe_allow_html=True)
-
-
-# ======================
-# JUDUL NAVIGASI (CENTER)
-# ======================
-st.markdown("""
-<h3 style="text-align:center; margin-top:30px;">
-    Navigasi Dashboard
-</h3>
 """, unsafe_allow_html=True)
 
 
@@ -102,6 +91,7 @@ with tabs[5]:
 
 with tabs[6]:
     contact_page()
+
 
 
 
