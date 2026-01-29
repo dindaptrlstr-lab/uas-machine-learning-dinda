@@ -4,7 +4,7 @@ import numpy as np
 
 
 def prediction_page():
-    st.subheader("🔮 Prediction App")
+    st.subheader("Prediction App")
 
     # =========================
     # DESKRIPSI HALAMAN
@@ -59,7 +59,7 @@ def prediction_page():
     # =========================
     # INPUT MANUAL DATA
     # =========================
-    st.subheader("📋 Input Data Baru")
+    st.subheader("Input Data")
 
     input_data = {}
     cols = st.columns(2)
@@ -118,3 +118,4 @@ def prediction_page():
         "- Model bersifat **klasifikasi**, bukan diagnosis.\n"
         "- Digunakan untuk **pembelajaran dan analisis data**."
     )
+
