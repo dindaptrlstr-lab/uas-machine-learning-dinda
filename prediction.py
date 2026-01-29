@@ -4,13 +4,13 @@ import numpy as np
 
 
 def prediction_page():
-    st.subheader("Prediction App")
+    st.subheader("Sistem Prediksi Kelayakan Air Minum serta Risiko Penyakit Kardiovaskular")
 
     # =========================
     # DESKRIPSI HALAMAN
     # =========================
     st.markdown("""
-    Halaman ini digunakan untuk melakukan **prediksi data baru**
+    Halaman ini digunakan untuk melakukan prediksi dari data
     menggunakan **model terbaik** hasil proses training.
     Pengguna dapat memasukkan nilai fitur secara **manual**
     untuk memperoleh hasil prediksi.
@@ -118,4 +118,5 @@ def prediction_page():
         "- Model bersifat **klasifikasi**, bukan diagnosis.\n"
         "- Digunakan untuk **pembelajaran dan analisis data**."
     )
+
 
