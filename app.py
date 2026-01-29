@@ -16,7 +16,7 @@ from contact import contact_page
 # KONFIGURASI HALAMAN
 # ======================
 st.set_page_config(
-    page_title="Machine Learning Classification Dashboard",
+    page_title="Dashboard Klasifikasi Machine Learning untuk Analisis Data Kesehatan dan Lingkungan",
     layout="wide"
 )
 
@@ -85,5 +85,6 @@ with tabs[5]:
 
 with tabs[6]:
     contact_page()
+
 
 
