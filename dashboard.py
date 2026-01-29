@@ -11,7 +11,7 @@ def dashboard_page():
     required_keys = ["df", "dataset_type", "target_col"]
     for key in required_keys:
         if key not in st.session_state:
-            st.warning("Silakan upload dataset terlebih dahulu melalui sidebar.")
+            st.warning("Silakan pilih data terlebih dahulu melalui menu pilih dataset.")
             return
 
     df = st.session_state["df"]
@@ -31,10 +31,10 @@ def dashboard_page():
     # =========================
     # JUDUL & DESKRIPSI HALAMAN
     # =========================
-    st.subheader("Dashboards & Exploratory Data Analysis (EDA)")
+    st.subheader("Exploratory Data Analysis (EDA) & Visualisasi")
 
     st.markdown(f"""
-    Halaman ini menampilkan **Exploratory Data Analysis (EDA)** untuk dataset **{dataset_type}**.
+    Halaman ini menampilkan Exploratory Data Analysis (EDA) untuk dataset **{dataset_type}**.
 
     Tujuan EDA adalah untuk memahami:
     - Distribusi kelas target
@@ -42,7 +42,7 @@ def dashboard_page():
     - Hubungan antar fitur numerik
 
     Hasil analisis ini digunakan sebagai dasar
-    sebelum dilakukan pemodelan **Machine Learning**.
+    sebelum dilakukan pemodelan Machine Learning.
     """)
 
     st.markdown("---")
@@ -109,8 +109,8 @@ def dashboard_page():
         Heatmap korelasi digunakan untuk mengidentifikasi
         hubungan antar fitur numerik.
 
-        - Korelasi tinggi dapat mengindikasikan **redundansi fitur**
-        - Korelasi rendah menunjukkan fitur yang lebih **independen**
+        - Korelasi tinggi dapat mengindikasikan redundansi fitur
+        - Korelasi rendah menunjukkan fitur yang lebih independen
 
         Informasi ini penting untuk tahap
         seleksi fitur dan interpretasi model.
@@ -120,4 +120,5 @@ def dashboard_page():
             "Dataset hanya memiliki satu fitur numerik, "
             "sehingga analisis korelasi tidak dapat dilakukan."
         )
+
 
