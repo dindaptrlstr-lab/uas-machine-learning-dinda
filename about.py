@@ -20,8 +20,8 @@ def show_about():
 
     if dataset_name == "water_potability.csv":
         st.markdown("""
-        **Water Potability Dataset** digunakan untuk
-        melakukan **klasifikasi kelayakan air minum**
+        Water Potability Dataset digunakan untuk
+        melakukan klasifikasi kelayakan air minum
         berdasarkan parameter kualitas air fisik dan kimia.
 
         **Fitur utama yang digunakan:**
@@ -49,8 +49,8 @@ def show_about():
 
     elif dataset_name == "cardio_train.csv":
         st.markdown("""
-        **Cardiovascular Disease Dataset** digunakan untuk
-        memprediksi **risiko penyakit kardiovaskular**
+        Cardiovascular Disease Dataset digunakan untuk
+        memprediksi risiko penyakit kardiovaskular
         berdasarkan data klinis dan gaya hidup pasien.
 
         **Fitur utama yang digunakan:**
@@ -80,7 +80,7 @@ def show_about():
         Dataset diunggah oleh pengguna.
 
         Informasi target dan tipe permasalahan
-        akan ditentukan pada tahap **Machine Learning**.
+        akan ditentukan pada tahap Machine Learning.
         """)
         dataset_type = "Tidak diketahui"
 
@@ -107,16 +107,16 @@ def show_about():
 
     st.markdown("""
     Aplikasi ini menerapkan beberapa algoritma
-    **Machine Learning untuk klasifikasi**, yaitu:
+    Machine Learning untuk klasifikasi, yaitu:
 
-    - **Logistic Regression**  
-    - **Decision Tree**  
-    - **Random Forest**  
-    - **Support Vector Machine (SVM)**  
-    - **CatBoost**
+    - Logistic Regression 
+    - Decision Tree 
+    - Random Forest 
+    - Support Vector Machine (SVM)
+    - CatBoost
 
     Model-model tersebut digunakan untuk
-    **membandingkan performa prediksi**
+    membandingkan performa prediksi
     menggunakan metrik evaluasi berikut:
     - Accuracy  
     - Precision  
@@ -135,6 +135,7 @@ def show_about():
         "- Target variabel ditentukan secara otomatis atau pada menu Machine Learning.\n"
         "- Hasil evaluasi model ditampilkan pada menu Machine Learning."
     )
+
 
 
 
