@@ -40,9 +40,9 @@ def modeling_page():
     st.subheader("Machine Learning")
 
     st.markdown("""
-    Halaman ini digunakan untuk melakukan **pelatihan (training)** dan
-    **evaluasi model klasifikasi** menggunakan pipeline
-    **Machine Learning end-to-end**.
+    Halaman ini digunakan untuk melakukan pelatihan (training) dan
+    evaluasi model klasifikasi menggunakan pipeline
+    Machine Learning end-to-end.
 
     Tahapan yang dilakukan:
     - Preprocessing data
@@ -212,7 +212,6 @@ def modeling_page():
     # =========================
     # HASIL EVALUASI
     # =========================
-    st.subheader("📊 Hasil Evaluasi Model")
     st.dataframe(results_df, use_container_width=True)
 
     st.success(
@@ -229,7 +228,7 @@ def modeling_page():
     # =========================
     # CONFUSION MATRIX
     # =========================
-    st.subheader("📌 Confusion Matrix")
+    st.subheader("Confusion Matrix")
 
     selected_model = st.selectbox(
         "Pilih model untuk melihat confusion matrix",
@@ -256,3 +255,4 @@ def modeling_page():
         "Model terbaik telah disimpan dan akan digunakan "
         "pada menu **Prediction App**."
     )
+
