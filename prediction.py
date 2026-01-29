@@ -10,8 +10,8 @@ def prediction_page():
     # DESKRIPSI HALAMAN
     # =========================
     st.markdown("""
-    Halaman ini dapat digunakan pengguna untuk 
-    untuk memperoleh hasil prediksi.
+    Halaman ini digunakan untuk memasukkan data pengguna 
+    dan memperoleh hasil prediksi dari model Machine Learning.
     """)
     st.markdown("---")
 
@@ -55,6 +55,23 @@ def prediction_page():
         return
 
     # =========================
+    # MAPPING LABEL (BAHASA INDONESIA)
+    # =========================
+    label_mapping = {
+        "age": "Umur (hari)",
+        "gender": "Jenis Kelamin (1 = Pria, 2 = Wanita)",
+        "height": "Tinggi Badan (cm)",
+        "weight": "Berat Badan (kg)",
+        "ap_hi": "Tekanan Darah Sistolik",
+        "ap_lo": "Tekanan Darah Diastolik",
+        "cholesterol": "Kolesterol (1=Normal, 2=Tinggi, 3=Sangat Tinggi)",
+        "gluc": "Gula Darah (1=Normal, 2=Tinggi, 3=Sangat Tinggi)",
+        "smoke": "Merokok (0=Tidak, 1=Ya)",
+        "alco": "Konsumsi Alkohol (0=Tidak, 1=Ya)",
+        "active": "Aktivitas Fisik (0=Tidak Aktif, 1=Aktif)"
+    }
+
+    # =========================
     # INPUT MANUAL DATA
     # =========================
     st.subheader("Input Data")
@@ -62,22 +79,22 @@ def prediction_page():
     input_data = {}
     cols = st.columns(2)
 
-    for i, feature in enumerate(feature_columns):
+    # HILANGKAN ID DARI INPUT
+    filtered_features = [f for f in feature_columns if f != "id"]
+
+    for i, feature in enumerate(filtered_features):
         col = cols[i % 2]
 
-        min_val = float(df[feature].min())
-        max_val = float(df[feature].max())
-        mean_val = float(df[feature].mean())
+        label_ui = label_mapping.get(feature, feature)
 
         input_data[feature] = col.number_input(
-    label=feature,
-    min_value=int(df[feature].min()),
-    max_value=int(df[feature].max()),
-    value=int(df[feature].mean()),
-    step=1,
-    format="%d"
-)
-
+            label=label_ui,
+            min_value=int(df[feature].min()),
+            max_value=int(df[feature].max()),
+            value=int(df[feature].mean()),
+            step=1,
+            format="%d"
+        )
 
     input_df = pd.DataFrame([input_data])
 
@@ -96,12 +113,13 @@ def prediction_page():
         prediction = model.predict(input_processed)[0]
 
         st.markdown("---")
-        st.subheader("Hasil Prediksi")
+        st.subheader("📌 Hasil Prediksi")
 
         if prediction == 1:
             st.success(f"✅ **{positive_label}**")
         else:
             st.error(f"❌ **{negative_label}**")
+
         st.write(
             "Hasil prediksi diperoleh dari **model terbaik** "
             "berdasarkan evaluasi **F1-Score**."
@@ -113,14 +131,7 @@ def prediction_page():
     st.markdown("---")
     st.info(
         "Catatan:\n"
-        "- Input dilakukan secara manual oleh pengguna.\n"
-        "- Model bersifat **klasifikasi**, bukan diagnosis.\n"
+        "- Data diinput secara manual oleh pengguna.\n"
+        "- Model bersifat **klasifikasi**, bukan diagnosis medis.\n"
         "- Digunakan untuk **pembelajaran dan analisis data**."
     )
-
-
-
-
-
-
-
