@@ -47,7 +47,6 @@ st.markdown("""
         margin-top:12px;
         padding:10px 20px;
         border-radius:8px;
-        display:inline-block;
         font-size:16px;
     ">
 </div>
@@ -91,6 +90,7 @@ with tabs[5]:
 
 with tabs[6]:
     contact_page()
+
 
 
 
