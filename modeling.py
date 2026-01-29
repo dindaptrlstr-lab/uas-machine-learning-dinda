@@ -28,7 +28,7 @@ def modeling_page():
     # PENGAMAN DATASET
     # =========================
     if "df" not in st.session_state or "dataset_name" not in st.session_state:
-        st.warning("Silakan upload dataset terlebih dahulu melalui menu Upload Dataset.")
+        st.warning("Silakan pilih data terlebih dahulu melalui menu Pilih Dataset.")
         return
 
     df = st.session_state["df"]
@@ -266,6 +266,7 @@ def modeling_page():
         "Model terbaik telah disimpan dan akan digunakan "
         "pada menu **Prediction App**."
     )
+
 
 
 
