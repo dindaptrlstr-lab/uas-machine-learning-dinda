@@ -70,12 +70,14 @@ def prediction_page():
         mean_val = float(df[feature].mean())
 
         input_data[feature] = col.number_input(
-            label=feature,
-            min_value=min_val,
-            max_value=max_val,
-            value=mean_val,
-            step=(max_val - min_val) / 100
-        )
+    label=feature,
+    min_value=int(df[feature].min()),
+    max_value=int(df[feature].max()),
+    value=int(df[feature].mean()),
+    step=1,
+    format="%d"
+)
+
 
     input_df = pd.DataFrame([input_data])
 
@@ -116,6 +118,7 @@ def prediction_page():
         "- Model bersifat **klasifikasi**, bukan diagnosis.\n"
         "- Digunakan untuk **pembelajaran dan analisis data**."
     )
+
 
 
 
