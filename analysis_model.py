@@ -169,11 +169,8 @@ def analysis_model_page():
         st.markdown("Prediksi diperoleh dari akumulasi seluruh model.")
 
     st.markdown("---")
-    st.info(
-        "Halaman ini bersifat **edukatif** dan hanya menampilkan "
-        "tahapan metode serta rumus matematis. "
-        "Training dan evaluasi model dilakukan pada menu lain."
-    )
+
+
 
 
 
