@@ -6,8 +6,8 @@ import numpy as np
 def prediction_page():
     st.subheader("Sistem Prediksi Kelayakan Air Minum dan Risiko Penyakit Jantung")
     st.markdown(
-    "Aplikasi ini dirancang untuk membantu proses **analisis dan pembelajaran Machine Learning** "
-    "dalam memprediksi **kelayakan air minum** serta **risiko penyakit jantung** berdasarkan "
+    "Sistem ini dirancang untuk membantu proses analisis dan pembelajaran Machine Learning "
+    "dalam memprediksi kelayakan air minum serta risiko penyakit jantung berdasarkan "
     "parameter input yang diberikan oleh pengguna."
 )
     st.markdown("---")
@@ -153,5 +153,6 @@ def prediction_page():
         "- Sistem ini digunakan untuk **pembelajaran Machine Learning**.\n"
         "- Hasil prediksi **bukan diagnosis atau uji laboratorium**."
     )
+
 
 
