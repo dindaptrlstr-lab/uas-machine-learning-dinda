@@ -11,6 +11,7 @@ from analysis_model import analysis_model_page
 from prediction import prediction_page
 from contact import contact_page
 
+
 # ======================
 # KONFIGURASI HALAMAN
 # ======================
@@ -18,6 +19,7 @@ st.set_page_config(
     page_title="Machine Learning Classification Dashboard",
     layout="wide"
 )
+
 
 # ======================
 # HILANGKAN SIDEBAR TOTAL (CSS)
@@ -32,21 +34,30 @@ section[data-testid="stSidebar"] {
 
 
 # ======================
-# HEADER UTAMA
+# HEADER UTAMA (CENTER)
 # ======================
-st.title("Machine Learning Classification Dashboard")
+st.markdown("""
+<div style="text-align: center; padding-top: 10px;">
+    <h1>Machine Learning Classification Dashboard</h1>
+    <p style="font-size:18px;">
+        Dashboard untuk analisis dan klasifikasi data kesehatan serta lingkungan<br>
+        dengan pendekatan <b>Machine Learning</b>.
+    </p>
+    <hr style="width:60%; margin:auto;">
+    <div style="
+        background-color:#eef6ff;
+        padding:12px;
+        border-radius:8px;
+        display:inline-block;
+        margin-top:10px;
+        font-size:16px;
+    ">
+        <b>Proyek Akhir UAS</b> – Mata Kuliah Machine Learning<br>
+        Program Studi Sains Data
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
-st.caption(
-    "Dashboard untuk analisis dan klasifikasi data kesehatan serta lingkungan "
-    "dengan pendekatan Machine Learning."
-)
-
-st.markdown("---")
-
-st.info(
-    "Proyek Akhir UAS – Mata Kuliah Machine Learning | "
-    "Program Studi Sains Data"
-)
 
 # ======================
 # TAB NAVIGASI (ALUR ML)
@@ -60,6 +71,7 @@ tabs = st.tabs([
     "Prediksi",
     "Kontak"
 ])
+
 
 # ======================
 # ISI TAB
@@ -84,13 +96,3 @@ with tabs[5]:
 
 with tabs[6]:
     contact_page()
-
-
-
-
-
-
-
-
-
-
