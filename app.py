@@ -11,6 +11,13 @@ from analysis_model import analysis_model_page
 from prediction import prediction_page
 from contact import contact_page
 
+# ======================
+# KONFIGURASI HALAMAN
+# ======================
+st.set_page_config(
+    page_title="Machine Learning Classification Dashboard",
+    layout="wide"
+)
 
 # ======================
 # HILANGKAN SIDEBAR TOTAL (CSS)
@@ -77,6 +84,7 @@ with tabs[5]:
 
 with tabs[6]:
     contact_page()
+
 
 
 
