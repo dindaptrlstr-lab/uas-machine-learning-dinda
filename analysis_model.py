@@ -175,3 +175,4 @@ def analysis_model_page():
         "Training dan evaluasi model dilakukan pada menu lain."
     )
 
+
