@@ -7,6 +7,7 @@ from upload import upload_page
 from about import show_about
 from dashboard import dashboard_page
 from modeling import modeling_page
+from analysis_model import analysis_model_page
 from prediction import prediction_page
 from contact import contact_page
 
@@ -51,7 +52,7 @@ div[data-testid="stTabs"] button[role="tab"] {
 
 
 # ======================
-# HEADER UTAMA (CENTER)
+# HEADER UTAMA
 # ======================
 st.markdown("""
 <div style="text-align:center; padding-top:15px;">
@@ -102,5 +103,3 @@ with tabs[5]:
 
 with tabs[6]:
     contact_page()
-
-
