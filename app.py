@@ -51,7 +51,6 @@ st.markdown("""
         display:inline-block;
         font-size:16px;
     ">
-        <b>Proyek Akhir UAS</b> – Mata Kuliah Machine Learning | Program Studi Sains Data
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -104,4 +103,5 @@ with tabs[5]:
 
 with tabs[6]:
     contact_page()
+
 
