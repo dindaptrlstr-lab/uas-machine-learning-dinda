@@ -4,7 +4,7 @@ import numpy as np
 
 
 def prediction_page():
-    st.subheader("Prediction App")
+    st.subheader("🔮 Prediction App")
 
     # =========================
     # DESKRIPSI HALAMAN
@@ -29,7 +29,7 @@ def prediction_page():
         return
 
     if "feature_columns" not in st.session_state:
-        st.warning("Informasi fitur tidak tersedia.")
+        st.warning("Informasi fitur tidak tersedia. Silakan lakukan training ulang.")
         return
 
     # =========================
@@ -42,7 +42,7 @@ def prediction_page():
     scaler = st.session_state.get("scaler")
 
     # =========================
-    # TARGET & LABEL
+    # LABEL TARGET
     # =========================
     if dataset_name == "water_potability.csv":
         positive_label = "Layak Minum"
@@ -59,11 +59,11 @@ def prediction_page():
     # =========================
     # INPUT MANUAL DATA
     # =========================
-    st.subheader("Input Data")
+    st.subheader("📋 Input Data Baru")
 
     input_data = {}
-
     cols = st.columns(2)
+
     for i, feature in enumerate(feature_columns):
         col = cols[i % 2]
 
@@ -80,10 +80,6 @@ def prediction_page():
         )
 
     input_df = pd.DataFrame([input_data])
-
-    st.markdown("---")
-    st.write("**Data yang dimasukkan:**")
-    st.dataframe(input_df, use_container_width=True)
 
     # =========================
     # PREPROCESSING
@@ -108,7 +104,7 @@ def prediction_page():
             st.error(f"❌ **{negative_label}**")
 
         st.write(
-            "Prediksi dihasilkan menggunakan **model terbaik** "
+            "Hasil prediksi diperoleh dari **model terbaik** "
             "berdasarkan evaluasi **F1-Score**."
         )
 
