@@ -40,7 +40,7 @@ def prediction_page():
     # =====================================================
     if dataset_name == "cardio_train.csv":
 
-        st.markdown("### 🫀 Data Kesehatan Jantung")
+        st.markdown("### Kesehatan Jantung")
 
         col1, col2 = st.columns(2)
 
@@ -89,7 +89,7 @@ def prediction_page():
     # =====================================================
     elif dataset_name == "water_potability.csv":
 
-        st.markdown("### 💧 Data Kualitas Air")
+        st.markdown("### Kualitas Air")
 
         col1, col2 = st.columns(2)
 
@@ -152,3 +152,4 @@ def prediction_page():
         "- Sistem ini digunakan untuk **pembelajaran Machine Learning**.\n"
         "- Hasil prediksi **bukan diagnosis atau uji laboratorium**."
     )
+
