@@ -40,8 +40,6 @@ def prediction_page():
     # =====================================================
     if dataset_name == "cardio_train.csv":
 
-        st.markdown("### Kesehatan Jantung")
-
         col1, col2 = st.columns(2)
 
         age_years = col1.number_input("Umur (tahun)", 10, 100, 50)
@@ -81,15 +79,13 @@ def prediction_page():
             "active": active
         }])
 
-        positive_label = "Berisiko Penyakit Jantung"
-        negative_label = "Tidak Berisiko"
+        positive_label = "Tidak Berisiko Penyakit Jantung"
+        negative_label = "Berisiko Penyakit Jantung"
 
     # =====================================================
     # DATASET 2 : WATER POTABILITY
     # =====================================================
     elif dataset_name == "water_potability.csv":
-
-        st.markdown("### Kualitas Air")
 
         col1, col2 = st.columns(2)
 
@@ -152,4 +148,5 @@ def prediction_page():
         "- Sistem ini digunakan untuk **pembelajaran Machine Learning**.\n"
         "- Hasil prediksi **bukan diagnosis atau uji laboratorium**."
     )
+
 
