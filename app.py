@@ -35,7 +35,7 @@ section[data-testid="stSidebar"] {
 # ======================
 # HEADER UTAMA
 # ======================
-st.title("Machine Learning Classification Dashboard")
+st.title("Dashboard Klasifikasi Machine Learning untuk Analisis Data Kesehatan dan Lingkungan")
 
 st.caption(
     "Dashboard untuk analisis dan klasifikasi data kesehatan serta lingkungan "
@@ -85,6 +85,7 @@ with tabs[5]:
 
 with tabs[6]:
     contact_page()
+
 
 
 
