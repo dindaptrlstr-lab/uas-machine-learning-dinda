@@ -8,10 +8,10 @@ def upload_page():
     # =========================
     # JUDUL HALAMAN
     # =========================
-    st.subheader("Pilih Dataset")
+    st.subheader("Pemilihan Dataset")
 
     st.write(
-        "Pilih dataset yang akan digunakan sebagai dasar "
+        "Tentukan dataset yang akan digunakan sebagai dasar "
         "analisis dan pemodelan Machine Learning."
     )
 
