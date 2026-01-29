@@ -36,7 +36,7 @@ def dashboard_page():
     st.markdown(f"""
     Halaman ini menampilkan Eksplorasi dan Visualisasi Data untuk dataset **{dataset_type}**.
 
-    Tujuan Eksploratif Data adalah untuk memahami:
+    Tujuan Eksplorasi Data adalah untuk memahami:
     - Distribusi kelas target
     - Potensi ketidakseimbangan data
     - Hubungan antar fitur numerik
@@ -120,4 +120,5 @@ def dashboard_page():
             "Dataset hanya memiliki satu fitur numerik, "
             "sehingga analisis korelasi tidak dapat dilakukan."
         )
+
 
