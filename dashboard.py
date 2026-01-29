@@ -36,7 +36,7 @@ def dashboard_page():
     st.markdown(f"""
     Halaman ini menampilkan Eksplorasi dan Visualisasi Data untuk dataset **{dataset_type}**.
 
-    Tujuan EDA adalah untuk memahami:
+    Tujuan Analisis Data Eksploratif (EDA) adalah untuk memahami:
     - Distribusi kelas target
     - Potensi ketidakseimbangan data
     - Hubungan antar fitur numerik
@@ -57,7 +57,7 @@ def dashboard_page():
     col1, col2, col3 = st.columns(3)
     col1.metric("Total Data", total_data)
     col2.metric("Jumlah Target = 1", positive_count)
-    col3.metric("Persentase Target = 1", f"{positive_rate:.2f}%")
+    col3.metric("Persentase Target = 1", f"{positive_rate:.0f}%")  # ← DIBULATKAN
 
     st.markdown("---")
 
@@ -120,8 +120,3 @@ def dashboard_page():
             "Dataset hanya memiliki satu fitur numerik, "
             "sehingga analisis korelasi tidak dapat dilakukan."
         )
-
-
-
-
-
