@@ -37,7 +37,7 @@ def modeling_page():
     # =========================
     # JUDUL & DESKRIPSI
     # =========================
-    st.subheader("Machine Learning")
+    st.subheader("Proses Machine Learning")
 
     st.markdown("""
     Halaman ini digunakan untuk melakukan pelatihan (training) dan
@@ -255,4 +255,5 @@ def modeling_page():
         "Model terbaik telah disimpan dan akan digunakan "
         "pada menu **Prediction App**."
     )
+
 
