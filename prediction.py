@@ -11,9 +11,9 @@ def prediction_page():
     # =========================
     st.markdown("""
     Halaman ini digunakan untuk melakukan **prediksi data baru**
-    menggunakan **model terbaik** yang diperoleh dari proses training
-    pada menu **Machine Learning**. Model dipilih berdasarkan **F1-Score terbaik** dan digunakan kembali
-    secara konsisten untuk proses inferensi.
+    menggunakan **model terbaik** hasil proses training.
+    Pengguna dapat memasukkan nilai fitur secara **manual**
+    untuk memperoleh hasil prediksi.
     """)
     st.markdown("---")
 
@@ -25,11 +25,11 @@ def prediction_page():
         return
 
     if "df" not in st.session_state or "dataset_name" not in st.session_state:
-        st.warning("Silakan upload dataset terlebih dahulu melalui sidebar.")
+        st.warning("Silakan upload dataset terlebih dahulu.")
         return
 
     if "feature_columns" not in st.session_state:
-        st.warning("Informasi fitur tidak tersedia. Silakan jalankan training ulang.")
+        st.warning("Informasi fitur tidak tersedia.")
         return
 
     # =========================
@@ -42,15 +42,13 @@ def prediction_page():
     scaler = st.session_state.get("scaler")
 
     # =========================
-    # TARGET & LABEL OTOMATIS
+    # TARGET & LABEL
     # =========================
     if dataset_name == "water_potability.csv":
-        target_col = "Potability"
         positive_label = "Layak Minum"
         negative_label = "Tidak Layak Minum"
 
     elif dataset_name == "cardio_train.csv":
-        target_col = "cardio"
         positive_label = "Berisiko Penyakit Jantung"
         negative_label = "Tidak Berisiko"
 
@@ -58,29 +56,37 @@ def prediction_page():
         st.error("Dataset tidak dikenali.")
         return
 
-    st.write(
-        "Prediksi dilakukan menggunakan **model terbaik** "
-        "yang telah dilatih sebelumnya."
-    )
+    # =========================
+    # INPUT MANUAL DATA
+    # =========================
+    st.subheader("Input Data")
+
+    input_data = {}
+
+    cols = st.columns(2)
+    for i, feature in enumerate(feature_columns):
+        col = cols[i % 2]
+
+        min_val = float(df[feature].min())
+        max_val = float(df[feature].max())
+        mean_val = float(df[feature].mean())
+
+        input_data[feature] = col.number_input(
+            label=feature,
+            min_value=min_val,
+            max_value=max_val,
+            value=mean_val,
+            step=(max_val - min_val) / 100
+        )
+
+    input_df = pd.DataFrame([input_data])
 
     st.markdown("---")
-
-    # =========================
-    # INPUT DATA OTOMATIS
-    # =========================
-    st.subheader("Data Input")
-
-    input_df = df[feature_columns].iloc[-1:].copy()
-
-    st.write(
-        "Data input diambil dari **baris terakhir dataset** "
-        "sebagai contoh observasi baru untuk prediksi."
-    )
-
+    st.write("**Data yang dimasukkan:**")
     st.dataframe(input_df, use_container_width=True)
 
     # =========================
-    # PREPROCESSING KONSISTEN
+    # PREPROCESSING
     # =========================
     if scaler is not None:
         input_processed = scaler.transform(input_df)
@@ -88,14 +94,13 @@ def prediction_page():
         input_processed = input_df.values
 
     # =========================
-    # JALANKAN PREDIKSI
+    # PREDIKSI
     # =========================
     if st.button("🔍 Jalankan Prediksi"):
-
         prediction = model.predict(input_processed)[0]
 
         st.markdown("---")
-        st.subheader("Hasil Prediksi")
+        st.subheader("📌 Hasil Prediksi")
 
         if prediction == 1:
             st.success(f"✅ **{positive_label}**")
@@ -103,19 +108,17 @@ def prediction_page():
             st.error(f"❌ **{negative_label}**")
 
         st.write(
-            "Hasil ini diperoleh dari **model terbaik** "
-            "berdasarkan evaluasi **F1-Score** "
-            "pada tahap Machine Learning."
+            "Prediksi dihasilkan menggunakan **model terbaik** "
+            "berdasarkan evaluasi **F1-Score**."
         )
 
     # =========================
-    # CATATAN AKADEMIK
+    # CATATAN
     # =========================
     st.markdown("---")
     st.info(
         "Catatan:\n"
-        "- Prediksi bersifat **klasifikasi**, bukan prediksi waktu.\n"
-        "- Data input berasal dari dataset yang di-upload.\n"
-        "- Hasil prediksi digunakan untuk **analisis dan pembelajaran**.\n"
-        "- Model tidak dimaksudkan sebagai alat diagnosis medis."
+        "- Input dilakukan secara manual oleh pengguna.\n"
+        "- Model bersifat **klasifikasi**, bukan diagnosis.\n"
+        "- Digunakan untuk **pembelajaran dan analisis data**."
     )
