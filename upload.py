@@ -12,7 +12,7 @@ def upload_page():
 
     st.write(
         "Pilih dataset yang akan digunakan sebagai dasar "
-        "analisis dan pemodelan **Machine Learning**."
+        "analisis dan pemodelan Machine Learning."
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
