@@ -29,6 +29,24 @@ st.markdown("""
 section[data-testid="stSidebar"] {
     display: none;
 }
+
+/* ===== TAB FULL WIDTH ===== */
+div[data-testid="stTabs"] {
+    width: 100%;
+}
+
+div[data-testid="stTabs"] div[role="tablist"] {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+div[data-testid="stTabs"] button[role="tab"] {
+    flex-grow: 1;
+    text-align: center;
+    white-space: nowrap;
+    font-size: 14px;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -40,15 +58,10 @@ st.markdown("""
 <div style="text-align:center; padding-top:15px;">
     <h1>Machine Learning Classification Dashboard</h1>
     <p style="font-size:16px;">
-        Dashboard untuk analisis dan klasifikasi data kesehatan serta lingkungan dengan pendekatan Machine Learning
+        Dashboard untuk analisis dan klasifikasi data kesehatan serta lingkungan
+        dengan pendekatan Machine Learning
     </p>
     <hr style="width:60%; margin:auto;">
-    <div style="
-        margin-top:12px;
-        padding:10px 20px;
-        border-radius:8px;
-        font-size:16px;
-    ">
 </div>
 """, unsafe_allow_html=True)
 
@@ -90,8 +103,3 @@ with tabs[5]:
 
 with tabs[6]:
     contact_page()
-
-
-
-
-
