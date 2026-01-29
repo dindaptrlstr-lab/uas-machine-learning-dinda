@@ -113,7 +113,7 @@ def show_about():
     - **Decision Tree Classifier**  
     - **Random Forest Classifier**  
     - **Support Vector Machine (SVM)**  
-    - **CatBoost Classifier**
+    - **CatBoost**
 
     Model-model tersebut digunakan untuk
     **membandingkan performa prediksi**
@@ -135,4 +135,5 @@ def show_about():
         "- Target variabel ditentukan secara otomatis atau pada menu Machine Learning.\n"
         "- Hasil evaluasi model ditampilkan pada menu Machine Learning."
     )
+
 
