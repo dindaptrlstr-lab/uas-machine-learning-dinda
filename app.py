@@ -39,9 +39,8 @@ section[data-testid="stSidebar"] {
 st.markdown("""
 <div style="text-align:center; padding-top:15px;">
     <h1>Machine Learning Classification Dashboard</h1>
-    <p style="font-size:18px;">
-        Dashboard untuk analisis dan klasifikasi data kesehatan serta lingkungan<br>
-        dengan pendekatan <b>Machine Learning</b>
+    <p style="font-size:16px;">
+        Dashboard untuk analisis dan klasifikasi data kesehatan serta lingkungan dengan pendekatan Machine Learning
     </p>
     <hr style="width:60%; margin:auto;">
     <div style="
@@ -105,3 +104,4 @@ with tabs[5]:
 
 with tabs[6]:
     contact_page()
+
