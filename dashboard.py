@@ -31,10 +31,10 @@ def dashboard_page():
     # =========================
     # JUDUL & DESKRIPSI HALAMAN
     # =========================
-    st.subheader("Exploratory Data Analysis & Visualisasi")
+    st.subheader("Eksplorasi dan Visualisasi Data")
 
     st.markdown(f"""
-    Halaman ini menampilkan Exploratory Data Analysis untuk dataset **{dataset_type}**.
+    Halaman ini menampilkan Eksplorasi dan Visualisasi Data untuk dataset **{dataset_type}**.
 
     Tujuan EDA adalah untuk memahami:
     - Distribusi kelas target
@@ -120,6 +120,7 @@ def dashboard_page():
             "Dataset hanya memiliki satu fitur numerik, "
             "sehingga analisis korelasi tidak dapat dilakukan."
         )
+
 
 
 
