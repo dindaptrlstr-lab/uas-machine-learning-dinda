@@ -81,7 +81,6 @@ def modeling_page():
     st.subheader("1️⃣ Preprocessing Data")
 
     df_model = df.copy()
-
     for col in df_model.columns:
         df_model[col] = pd.to_numeric(df_model[col], errors="coerce")
 
@@ -91,9 +90,9 @@ def modeling_page():
 
     st.info(
         f"Data dibersihkan dari missing value.\n\n"
-        f"- Jumlah data awal   : {before_rows}\n"
-        f"- Jumlah data akhir  : {after_rows}\n"
-        f"- Data terhapus      : {before_rows - after_rows}"
+        f"- Jumlah data awal  : {before_rows}\n"
+        f"- Jumlah data akhir : {after_rows}\n"
+        f"- Data terhapus     : {before_rows - after_rows}"
     )
 
     X = df_model.drop(columns=[target_col])
@@ -105,8 +104,7 @@ def modeling_page():
     st.subheader("2️⃣ Pembagian Data Latih dan Data Uji")
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X,
-        y,
+        X, y,
         test_size=0.2,
         random_state=42,
         stratify=y
@@ -114,10 +112,10 @@ def modeling_page():
 
     st.success(
         f"""
-        Data dibagi menggunakan **Train-Test Split (80% : 20%)**.
+        Data dibagi menggunakan **Train-Test Split (80 : 20)**.
 
-        - Jumlah data latih (Training) : {len(X_train)}
-        - Jumlah data uji (Testing)    : {len(X_test)}
+        - Jumlah data latih : {len(X_train)}
+        - Jumlah data uji   : {len(X_test)}
         """
     )
 
@@ -132,7 +130,7 @@ def modeling_page():
 
     st.info(
         "Standardisasi fitur dilakukan menggunakan **StandardScaler** "
-        "agar data memiliki skala yang sebanding."
+        "agar seluruh fitur berada pada skala yang sebanding."
     )
 
     st.session_state["scaler"] = scaler
@@ -157,7 +155,7 @@ def modeling_page():
         )
     }
 
-    st.write("Algoritma yang digunakan dalam pelatihan model:")
+    st.write("Algoritma yang digunakan:")
     for m in models.keys():
         st.markdown(f"- {m}")
 
@@ -192,10 +190,10 @@ def modeling_page():
 
         results.append({
             "Algoritma": name,
-            "Accuracy (%)": round(acc * 100, 2),
-            "Precision (%)": round(prec * 100, 2),
-            "Recall (%)": round(rec * 100, 2),
-            "F1-Score (%)": round(f1 * 100, 2)
+            "Accuracy": round(acc, 4),
+            "Precision": round(prec, 4),
+            "Recall": round(rec, 4),
+            "F1-Score": round(f1, 4)
         })
 
         if f1 > best_f1:
@@ -203,10 +201,10 @@ def modeling_page():
             best_model = model
             best_model_name = name
             best_metrics = {
-                "accuracy": acc * 100,
-                "precision": prec * 100,
-                "recall": rec * 100,
-                "f1": f1 * 100
+                "accuracy": acc,
+                "precision": prec,
+                "recall": rec,
+                "f1": f1
             }
 
     results_df = pd.DataFrame(results)
@@ -221,10 +219,10 @@ def modeling_page():
         f"""
         **Model Terbaik: {best_model_name}**
 
-        - Accuracy  : {best_metrics['accuracy']:.2f}%
-        - Precision : {best_metrics['precision']:.2f}%
-        - Recall    : {best_metrics['recall']:.2f}%
-        - F1-Score  : {best_metrics['f1']:.2f}%
+        - Accuracy  : {best_metrics['accuracy']:.4f}
+        - Precision : {best_metrics['precision']:.4f}
+        - Recall    : {best_metrics['recall']:.4f}
+        - F1-Score  : {best_metrics['f1']:.4f}
         """
     )
 
