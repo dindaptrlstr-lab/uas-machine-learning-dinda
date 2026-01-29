@@ -247,8 +247,7 @@ def modeling_page():
     st.dataframe(cm_labeled, use_container_width=True)
 
     # ========================= # KETERANGAN DETAIL # ========================= 
-    st.markdown("### 
-    Keterangan") 
+    st.markdown("### Keterangan") 
     
     st.markdown(f""" 
     - **True Positive (TP)** = {tp} Model memprediksi **positif**, dan data **benar-benar positif**. 
@@ -267,6 +266,7 @@ def modeling_page():
         "Model terbaik telah disimpan dan akan digunakan "
         "pada menu **Prediction App**."
     )
+
 
 
 
