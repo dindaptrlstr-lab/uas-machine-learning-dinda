@@ -10,9 +10,7 @@ def prediction_page():
     # DESKRIPSI HALAMAN
     # =========================
     st.markdown("""
-    Halaman ini digunakan untuk melakukan prediksi berdasarkan data
-    yang telah diproses pada tahap pelatihan.
-    Pengguna dapat memasukkan nilai fitur secara manual
+    Halaman ini dapat digunakan pengguna untuk 
     untuk memperoleh hasil prediksi.
     """)
     st.markdown("---")
@@ -118,6 +116,7 @@ def prediction_page():
         "- Model bersifat **klasifikasi**, bukan diagnosis.\n"
         "- Digunakan untuk **pembelajaran dan analisis data**."
     )
+
 
 
 
