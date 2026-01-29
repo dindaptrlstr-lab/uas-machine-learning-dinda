@@ -136,7 +136,7 @@ def prediction_page():
         prediction = model.predict(input_processed)[0]
 
         st.markdown("---")
-        st.subheader("📌 Hasil Prediksi")
+        st.subheader("Hasil Prediksi")
 
         if prediction == 1:
             st.error(f"⚠️ **{positive_label}**")
@@ -152,3 +152,4 @@ def prediction_page():
         "- Sistem ini digunakan untuk **pembelajaran dan analisis data**, "
         "bukan sebagai diagnosis medis."
     )
+
