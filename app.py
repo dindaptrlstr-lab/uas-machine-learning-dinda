@@ -13,26 +13,6 @@ from contact import contact_page
 
 
 # ======================
-# JUDUL HALAMAN (CENTER)
-# ======================
-st.markdown(
-    "<h1 style='text-align: center;'>"
-    "Dashboard Klasifikasi Machine Learning<br>"
-    "untuk Analisis Data Kesehatan dan Lingkungan"
-    "</h1>",
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    "<p style='text-align: center;'>"
-    "Proyek Akhir UAS – Mata Kuliah Machine Learning | Program Studi Sains Data"
-    "</p>",
-    unsafe_allow_html=True
-)
-
-st.markdown("---")
-
-# ======================
 # HILANGKAN SIDEBAR TOTAL (CSS)
 # ======================
 st.markdown("""
@@ -97,6 +77,7 @@ with tabs[5]:
 
 with tabs[6]:
     contact_page()
+
 
 
 
