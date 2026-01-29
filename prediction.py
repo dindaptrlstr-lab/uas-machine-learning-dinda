@@ -4,14 +4,14 @@ import numpy as np
 
 
 def prediction_page():
-    st.subheader("Sistem Prediksi Kelayakan Air Minum serta Risiko Penyakit Kardiovaskular")
+    st.subheader("Sistem Prediksi Risiko Penyakit Kardiovaskular")
 
     # =========================
     # DESKRIPSI HALAMAN
     # =========================
     st.markdown("""
-    Halaman ini digunakan untuk memasukkan data pengguna 
-    dan memperoleh hasil prediksi dari model Machine Learning.
+    Halaman ini digunakan untuk memasukkan data kesehatan pengguna 
+    dan memperoleh hasil prediksi risiko penyakit kardiovaskular.
     """)
     st.markdown("---")
 
@@ -31,72 +31,132 @@ def prediction_page():
         return
 
     # =========================
-    # AMBIL OBJEK DARI SESSION
+    # AMBIL OBJEK SESSION
     # =========================
     model = st.session_state["best_model"]
     df = st.session_state["df"]
     dataset_name = st.session_state["dataset_name"]
-    feature_columns = st.session_state["feature_columns"]
     scaler = st.session_state.get("scaler")
 
     # =========================
     # LABEL TARGET
     # =========================
-    if dataset_name == "water_potability.csv":
-        positive_label = "Layak Minum"
-        negative_label = "Tidak Layak Minum"
-
-    elif dataset_name == "cardio_train.csv":
+    if dataset_name == "cardio_train.csv":
         positive_label = "Berisiko Penyakit Jantung"
         negative_label = "Tidak Berisiko"
-
     else:
         st.error("Dataset tidak dikenali.")
         return
 
     # =========================
-    # MAPPING LABEL (BAHASA INDONESIA)
-    # =========================
-    label_mapping = {
-        "age": "Umur (hari)",
-        "gender": "Jenis Kelamin (1 = Pria, 2 = Wanita)",
-        "height": "Tinggi Badan (cm)",
-        "weight": "Berat Badan (kg)",
-        "ap_hi": "Tekanan Darah Sistolik",
-        "ap_lo": "Tekanan Darah Diastolik",
-        "cholesterol": "Kolesterol (1=Normal, 2=Tinggi, 3=Sangat Tinggi)",
-        "gluc": "Gula Darah (1=Normal, 2=Tinggi, 3=Sangat Tinggi)",
-        "smoke": "Merokok (0=Tidak, 1=Ya)",
-        "alco": "Konsumsi Alkohol (0=Tidak, 1=Ya)",
-        "active": "Aktivitas Fisik (0=Tidak Aktif, 1=Aktif)"
-    }
-
-    # =========================
-    # INPUT MANUAL DATA
+    # INPUT DATA (USER FRIENDLY)
     # =========================
     st.subheader("Input Data")
 
-    input_data = {}
-    cols = st.columns(2)
+    col1, col2 = st.columns(2)
 
-    # HILANGKAN ID DARI INPUT
-    filtered_features = [f for f in feature_columns if f != "id"]
+    # Umur (tahun → hari)
+    age_years = col1.number_input(
+        "Umur (tahun)",
+        min_value=10,
+        max_value=100,
+        value=50,
+        step=1
+    )
+    age = age_years * 365
 
-    for i, feature in enumerate(filtered_features):
-        col = cols[i % 2]
+    # Jenis Kelamin
+    gender_label = col2.selectbox(
+        "Jenis Kelamin",
+        ["Pria", "Wanita"]
+    )
+    gender = 1 if gender_label == "Pria" else 2
 
-        label_ui = label_mapping.get(feature, feature)
+    # Tinggi & Berat Badan
+    height = col1.number_input(
+        "Tinggi Badan (cm)",
+        min_value=100,
+        max_value=220,
+        value=165,
+        step=1
+    )
 
-        input_data[feature] = col.number_input(
-            label=label_ui,
-            min_value=int(df[feature].min()),
-            max_value=int(df[feature].max()),
-            value=int(df[feature].mean()),
-            step=1,
-            format="%d"
-        )
+    weight = col2.number_input(
+        "Berat Badan (kg)",
+        min_value=30,
+        max_value=200,
+        value=70,
+        step=1
+    )
 
-    input_df = pd.DataFrame([input_data])
+    # Tekanan Darah
+    ap_hi = col1.number_input(
+        "Tekanan Darah Sistolik",
+        min_value=80,
+        max_value=250,
+        value=120,
+        step=1
+    )
+
+    ap_lo = col2.number_input(
+        "Tekanan Darah Diastolik",
+        min_value=50,
+        max_value=150,
+        value=80,
+        step=1
+    )
+
+    # Kolesterol
+    cholesterol_label = col1.selectbox(
+        "Kolesterol",
+        ["Normal", "Tinggi", "Sangat Tinggi"]
+    )
+    cholesterol = {"Normal": 1, "Tinggi": 2, "Sangat Tinggi": 3}[cholesterol_label]
+
+    # Gula Darah
+    gluc_label = col2.selectbox(
+        "Gula Darah",
+        ["Normal", "Tinggi", "Sangat Tinggi"]
+    )
+    gluc = {"Normal": 1, "Tinggi": 2, "Sangat Tinggi": 3}[gluc_label]
+
+    # Merokok
+    smoke_label = col1.selectbox(
+        "Merokok",
+        ["Tidak", "Ya"]
+    )
+    smoke = 1 if smoke_label == "Ya" else 0
+
+    # Konsumsi Alkohol
+    alco_label = col2.selectbox(
+        "Konsumsi Alkohol",
+        ["Tidak", "Ya"]
+    )
+    alco = 1 if alco_label == "Ya" else 0
+
+    # Aktivitas Fisik
+    active_label = col2.selectbox(
+        "Aktivitas Fisik",
+        ["Tidak Aktif", "Aktif"]
+    )
+    active = 1 if active_label == "Aktif" else 0
+
+    # =========================
+    # DATAFRAME INPUT
+    # =========================
+    input_df = pd.DataFrame([{
+        "age": age,
+        "gender": gender,
+        "height": height,
+        "weight": weight,
+        "ap_hi": ap_hi,
+        "ap_lo": ap_lo,
+        "cholesterol": cholesterol,
+        "gluc": gluc,
+        "smoke": smoke,
+        "alco": alco,
+        "active": active
+    }])
 
     # =========================
     # PREPROCESSING
@@ -116,14 +176,9 @@ def prediction_page():
         st.subheader("📌 Hasil Prediksi")
 
         if prediction == 1:
-            st.success(f"✅ **{positive_label}**")
+            st.error(f"⚠️ **{positive_label}**")
         else:
-            st.error(f"❌ **{negative_label}**")
-
-        st.write(
-            "Hasil prediksi diperoleh dari **model terbaik** "
-            "berdasarkan evaluasi **F1-Score**."
-        )
+            st.success(f"✅ **{negative_label}**")
 
     # =========================
     # CATATAN
@@ -131,7 +186,8 @@ def prediction_page():
     st.markdown("---")
     st.info(
         "Catatan:\n"
-        "- Data diinput secara manual oleh pengguna.\n"
-        "- Model bersifat **klasifikasi**, bukan diagnosis medis.\n"
-        "- Digunakan untuk **pembelajaran dan analisis data**."
+        "- Data dimasukkan secara manual oleh pengguna.\n"
+        "- Nilai input dikonversi ke format numerik sesuai dataset.\n"
+        "- Sistem ini digunakan untuk **pembelajaran dan analisis data**, "
+        "bukan sebagai diagnosis medis."
     )
