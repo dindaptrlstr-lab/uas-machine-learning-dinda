@@ -2,10 +2,10 @@ import streamlit as st
 
 def analysis_model_page():
 
-    st.subheader("Analisis Model Klasifikasi")
+    st.subheader("Alur Pemodelan Klasifikasi")
     st.markdown(
-        "Halaman ini menampilkan **tahapan metode dan rumus matematis** "
-        "dari algoritma klasifikasi Machine Learning secara **edukatif**."
+        "Halaman ini menampilkan tahapan metode dan rumus matematis "
+        "dari algoritma klasifikasi Machine Learning secara edukatif."
     )
 
     st.markdown("---")
@@ -174,3 +174,4 @@ def analysis_model_page():
         "tahapan metode serta rumus matematis. "
         "Training dan evaluasi model dilakukan pada menu lain."
     )
+
