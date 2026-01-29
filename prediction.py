@@ -22,10 +22,6 @@ def prediction_page():
         st.warning("Silakan jalankan menu **Machine Learning** terlebih dahulu.")
         return
 
-    if "df" not in st.session_state or "dataset_name" not in st.session_state:
-        st.warning("Silakan upload dataset terlebih dahulu.")
-        return
-
     if "feature_columns" not in st.session_state:
         st.warning("Informasi fitur tidak tersedia. Silakan lakukan training ulang.")
         return
@@ -34,9 +30,9 @@ def prediction_page():
     # AMBIL OBJEK SESSION
     # =========================
     model = st.session_state["best_model"]
-    scaler = st.session_state.get("scaler")
+    scaler = st.session_state.get("scaler", None)
     feature_columns = st.session_state["feature_columns"]
-    dataset_name = st.session_state["dataset_name"]
+    dataset_name = st.session_state.get("dataset_name", "")
 
     # =========================
     # LABEL TARGET
@@ -45,8 +41,8 @@ def prediction_page():
         positive_label = "Berisiko Penyakit Jantung"
         negative_label = "Tidak Berisiko"
     else:
-        st.error("Dataset tidak dikenali.")
-        return
+        positive_label = "Risiko Tinggi"
+        negative_label = "Risiko Rendah"
 
     # =========================
     # INPUT DATA
@@ -64,7 +60,7 @@ def prediction_page():
     gender_label = col2.selectbox("Jenis Kelamin", ["Pria", "Wanita"])
     gender = 1 if gender_label == "Pria" else 2
 
-    # Tinggi & Berat Badan
+    # Tinggi & Berat
     height = col1.number_input(
         "Tinggi Badan (cm)", min_value=100, max_value=220, value=165, step=1
     )
@@ -74,10 +70,10 @@ def prediction_page():
 
     # Tekanan Darah
     ap_hi = col1.number_input(
-        "Tekanan Darah Sistolik", min_value=80, max_value=250, value=120, step=1
+        "Tekanan Darah Sistolik", min_value=80, max_value=250, value=120
     )
     ap_lo = col2.number_input(
-        "Tekanan Darah Diastolik", min_value=50, max_value=150, value=80, step=1
+        "Tekanan Darah Diastolik", min_value=50, max_value=150, value=80
     )
 
     # Kolesterol
@@ -92,20 +88,13 @@ def prediction_page():
     )
     gluc = {"Normal": 1, "Tinggi": 2, "Sangat Tinggi": 3}[gluc_label]
 
-    # Merokok
-    smoke_label = col1.selectbox("Merokok", ["Tidak", "Ya"])
-    smoke = 1 if smoke_label == "Ya" else 0
-
-    # Konsumsi Alkohol
-    alco_label = col2.selectbox("Konsumsi Alkohol", ["Tidak", "Ya"])
-    alco = 1 if alco_label == "Ya" else 0
-
-    # Aktivitas Fisik
-    active_label = col2.selectbox("Aktivitas Fisik", ["Tidak Aktif", "Aktif"])
-    active = 1 if active_label == "Aktif" else 0
+    # Kebiasaan
+    smoke = 1 if col1.selectbox("Merokok", ["Tidak", "Ya"]) == "Ya" else 0
+    alco = 1 if col2.selectbox("Konsumsi Alkohol", ["Tidak", "Ya"]) == "Ya" else 0
+    active = 1 if col2.selectbox("Aktivitas Fisik", ["Tidak Aktif", "Aktif"]) == "Aktif" else 0
 
     # =========================
-    # DATAFRAME INPUT
+    # DATAFRAME INPUT DASAR
     # =========================
     input_df = pd.DataFrame([{
         "age": age,
@@ -122,11 +111,19 @@ def prediction_page():
     }])
 
     # =========================
-    # PREPROCESSING (FIX ERROR)
+    # PENYESUAIAN FITUR (ANTI KEYERROR)
     # =========================
-    # Samakan urutan & nama fitur dengan data training
+    # Tambahkan kolom yang ada di training tapi tidak ada di input
+    for col in feature_columns:
+        if col not in input_df.columns:
+            input_df[col] = 0  # default aman
+
+    # Ambil hanya fitur yang dipakai model & urutkan
     input_df = input_df[feature_columns]
 
+    # =========================
+    # PREPROCESSING
+    # =========================
     if scaler is not None:
         input_processed = scaler.transform(input_df)
     else:
