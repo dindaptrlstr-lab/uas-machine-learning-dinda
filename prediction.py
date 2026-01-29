@@ -96,16 +96,12 @@ def prediction_page():
         prediction = model.predict(input_processed)[0]
 
         st.markdown("---")
-        st.subheader("📌 Hasil Prediksi")
+        st.subheader("Hasil Prediksi")
 
         if prediction == 1:
             st.success(f"✅ **{positive_label}**")
         else:
             st.error(f"❌ **{negative_label}**")
-
-        st.write(
-            "Hasil prediksi diperoleh dari **model terbaik** "
-            "berdasarkan evaluasi **F1-Score**."
         )
 
     # =========================
@@ -118,6 +114,7 @@ def prediction_page():
         "- Model bersifat **klasifikasi**, bukan diagnosis.\n"
         "- Digunakan untuk **pembelajaran dan analisis data**."
     )
+
 
 
 
