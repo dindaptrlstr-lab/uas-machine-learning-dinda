@@ -247,9 +247,11 @@ def modeling_page():
     st.dataframe(cm_labeled, use_container_width=True)
 
     # ========================= # KETERANGAN DETAIL # ========================= 
-    st.markdown("### Keterangan Confusion Matrix") 
+    st.markdown("### 
+    Keterangan") 
     
-    st.markdown(f""" - **True Positive (TP)** = {tp} Model memprediksi **positif**, dan data **benar-benar positif**. 
+    st.markdown(f""" 
+    - **True Positive (TP)** = {tp} Model memprediksi **positif**, dan data **benar-benar positif**. 
     - **False Positive (FP)** = {fp} Model memprediksi **positif**, tetapi data **sebenarnya negatif**. 
     - **False Negative (FN)** = {fn} Model memprediksi **negatif**, tetapi data **sebenarnya positif**. 
     - **True Negative (TN)** = {tn} Model memprediksi **negatif**, dan data **benar-benar negatif**. """) 
@@ -265,6 +267,7 @@ def modeling_page():
         "Model terbaik telah disimpan dan akan digunakan "
         "pada menu **Prediction App**."
     )
+
 
 
 
