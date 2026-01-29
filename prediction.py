@@ -31,7 +31,7 @@ def prediction_page():
     dataset_name = st.session_state["dataset_name"]
 
     # =========================
-    # PILIH FORM INPUT
+    # INPUT DATA
     # =========================
     st.subheader("Input Data")
 
@@ -42,16 +42,16 @@ def prediction_page():
 
         col1, col2 = st.columns(2)
 
-        age_years = col1.number_input("Umur (tahun)", 10, 100, 50)
+        age_years = col1.number_input("Umur (tahun)", 10, 100, 50, step=1)
         age = age_years * 365
 
         gender = 1 if col2.selectbox("Jenis Kelamin", ["Pria", "Wanita"]) == "Pria" else 2
 
-        height = col1.number_input("Tinggi Badan (cm)", 100, 220, 165)
-        weight = col2.number_input("Berat Badan (kg)", 30, 200, 70)
+        height = col1.number_input("Tinggi Badan (cm)", 100, 220, 165, step=1)
+        weight = col2.number_input("Berat Badan (kg)", 30, 200, 70, step=1)
 
-        ap_hi = col1.number_input("Tekanan Darah Sistolik", 80, 250, 120)
-        ap_lo = col2.number_input("Tekanan Darah Diastolik", 50, 150, 80)
+        ap_hi = col1.number_input("Tekanan Darah Sistolik", 80, 250, 120, step=1)
+        ap_lo = col2.number_input("Tekanan Darah Diastolik", 50, 150, 80, step=1)
 
         cholesterol = {"Normal": 1, "Tinggi": 2, "Sangat Tinggi": 3}[
             col1.selectbox("Kolesterol", ["Normal", "Tinggi", "Sangat Tinggi"])
@@ -66,17 +66,17 @@ def prediction_page():
         active = 1 if col2.selectbox("Aktivitas Fisik", ["Tidak Aktif", "Aktif"]) == "Aktif" else 0
 
         input_df = pd.DataFrame([{
-            "age": age,
-            "gender": gender,
-            "height": height,
-            "weight": weight,
-            "ap_hi": ap_hi,
-            "ap_lo": ap_lo,
-            "cholesterol": cholesterol,
-            "gluc": gluc,
-            "smoke": smoke,
-            "alco": alco,
-            "active": active
+            "age": int(age),
+            "gender": int(gender),
+            "height": int(height),
+            "weight": int(weight),
+            "ap_hi": int(ap_hi),
+            "ap_lo": int(ap_lo),
+            "cholesterol": int(cholesterol),
+            "gluc": int(gluc),
+            "smoke": int(smoke),
+            "alco": int(alco),
+            "active": int(active)
         }])
 
         positive_label = "Tidak Berisiko Penyakit Jantung"
@@ -90,15 +90,15 @@ def prediction_page():
         col1, col2 = st.columns(2)
 
         input_df = pd.DataFrame([{
-            "ph": col1.number_input("ph", value=7.0, format="%.2f"),
-            "Hardness": col2.number_input("Hardness", value=200.0, format="%.2f"),
-            "Solids": col1.number_input("Solids", value=20000.0, format="%.2f"),
-            "Chloramines": col2.number_input("Chloramines", value=7.0, format="%.2f"),
-            "Sulfate": col1.number_input("Sulfate", value=330.0, format="%.2f"),
-            "Conductivity": col2.number_input("Conductivity", value=420.0, format="%.2f"),
-            "Organic_carbon": col1.number_input("Organic_carbon", value=14.0, format="%.2f"),
-            "Trihalomethanes": col2.number_input("Trihalomethanes", value=66.0, format="%.2f"),
-            "Turbidity": col1.number_input("Turbidity", value=4.0, format="%.2f")
+            "ph": int(col1.number_input("ph", 0, 14, 7, step=1)),
+            "Hardness": int(col2.number_input("Hardness", 0, 500, 200, step=1)),
+            "Solids": int(col1.number_input("Solids", 0, 50000, 20000, step=1)),
+            "Chloramines": int(col2.number_input("Chloramines", 0, 20, 7, step=1)),
+            "Sulfate": int(col1.number_input("Sulfate", 0, 500, 330, step=1)),
+            "Conductivity": int(col2.number_input("Conductivity", 0, 1000, 420, step=1)),
+            "Organic_carbon": int(col1.number_input("Organic_carbon", 0, 50, 14, step=1)),
+            "Trihalomethanes": int(col2.number_input("Trihalomethanes", 0, 200, 66, step=1)),
+            "Turbidity": int(col1.number_input("Turbidity", 0, 20, 4, step=1))
         }])
 
         positive_label = "Air Layak Minum"
@@ -148,5 +148,3 @@ def prediction_page():
         "- Sistem ini digunakan untuk **pembelajaran Machine Learning**.\n"
         "- Hasil prediksi **bukan diagnosis atau uji laboratorium**."
     )
-
-
