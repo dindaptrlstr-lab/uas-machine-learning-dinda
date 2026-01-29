@@ -22,16 +22,15 @@ st.set_page_config(
 
 
 # ======================
-# HILANGKAN SIDEBAR + STYLE TAB
+# HILANGKAN SIDEBAR TOTAL
 # ======================
 st.markdown("""
 <style>
-/* Hilangkan sidebar */
 section[data-testid="stSidebar"] {
     display: none;
 }
 
-/* Tabs full width */
+/* ===== TAB FULL WIDTH ===== */
 div[data-testid="stTabs"] {
     width: 100%;
 }
@@ -53,28 +52,16 @@ div[data-testid="stTabs"] button[role="tab"] {
 
 
 # ======================
-# HEADER UTAMA (CENTER + BANNER BIRU)
+# HEADER UTAMA (CENTER)
 # ======================
 st.markdown("""
-<div style="text-align:center; padding-top:20px;">
-
+<div style="text-align:center; padding-top:15px;">
     <h1>Machine Learning Classification Dashboard</h1>
-
-    <div style="
-        background-color:#e3f2fd;
-        color:#0d47a1;
-        padding:14px 0;
-        margin:12px 0;
-        font-size:16px;
-        width:100%;
-        text-align:center;
-    ">
+    <p style="font-size:16px;">
         Dashboard untuk analisis dan klasifikasi data kesehatan serta lingkungan
-        dengan pendekatan <b>Machine Learning</b>
-    </div>
-
-    <hr style="width:60%; margin:20px auto;">
-
+        dengan pendekatan Machine Learning
+    </p>
+    <hr style="width:60%; margin:auto;">
 </div>
 """, unsafe_allow_html=True)
 
